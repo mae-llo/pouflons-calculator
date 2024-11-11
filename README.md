@@ -25,10 +25,19 @@ Total Coin Payout
 
 # todo
 
+High Priority:
+
+- Make it so adding a character doesn't create the 'added characters' thing anymore. Just have it create another 'form' that can be filled out so users can add a new character while also being able to edit their previous characters. Also add a 'remove' character option for mistakes.
+- When a user hits 'calculate rewards' it should add all of the character's badges (e.g, Bob's Badges: Tamer(2c) + etc) into the copy/paste result breakdown as well as adding the coins into the total.
 - Add in WC bonus calculation (submission WC - max WC requirement) / 250 \* 2c. (Basically: for each 250 words over the WC requirement the submission is, you get 2c)
-- Make it so that the character calculations get added to the entire 'calculate rewards' section
+
+Myehhhh:
+
 - Tidy code base
 - Make it visually better
+
+Low Priority:
+
 - Add art support (currently just writing)
 - Add collab support (will be easy, just multiplying the final result by .75)
 - Add safari badge --> normally 1c, but 2c if a fauna or megafauna is present
