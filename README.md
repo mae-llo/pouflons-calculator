@@ -30,6 +30,8 @@ High Priority:
 - Make it so adding a character doesn't create the 'added characters' thing anymore. Just have it create another 'form' that can be filled out so users can add a new character while also being able to edit their previous characters. Also add a 'remove' character option for mistakes.
 - When a user hits 'calculate rewards' it should add all of the character's badges (e.g, Bob's Badges: Tamer(2c) + etc) into the copy/paste result breakdown as well as adding the coins into the total.
 - Add in WC bonus calculation (submission WC - max WC requirement) / 250 \* 2c. (Basically: for each 250 words over the WC requirement the submission is, you get 2c)
+- Rad Bandana should be a character-specific bonus (each character can have it, rather than one per piece)
+- Only one wanderberry badge may be claimed per piece, but it's a character specific item... maybe move it somewhere else? Or keep it in characters?
 
 Myehhhh:
 
