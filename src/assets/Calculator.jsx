@@ -3,9 +3,13 @@ import { Form, Button, Col, Row, InputGroup } from 'react-bootstrap';
 import CharacterBadgeForm from './CharacterBadgeForm';
 
 function RewardForm() {
+  const badges = ['Agriculture','Art','Astronomy','Athletics','Aviator','Beloved','Boss','Buddy','Chivalrous','Clumsy','Commoner','Dancer','Detective','Eloquent','Flirty','Floriculture','Foodie','Geology','Healer','Hospitality','Inventor','Lazybones','Loner','Macabre','Merchant','Meteorology','Music','Nobility','Nurturing','Party','Performer','Ranger','Safari','Scholar','Seafarer','Smith','Tailor','Tamer','Thief','Traveler','Trickster','Urchin','Woodworker','Captain','City Guard','Hired Sword','Instructor','Royal Messanger','Scout','Squire','Templar','Village Guard','Air','Candle','Earth','Fire','Ice','Nature','Potion','Seeker','Water']
   const [baseReward, setBaseReward] = useState(0);
   const [wcReq, setWcReq] = useState(0);
   const [wcSubm, setWcSubm] = useState(0);
+  const [characters, setCharacters] = useState([]);
+  const [copyText, setCopyText] = useState('');
+  const [showCharacterForm, setShowCharacterForm] = useState(false);
 
   const [items, setItems] = useState({
     radBandana: false,
@@ -30,7 +34,53 @@ function RewardForm() {
     moodboard: false,
   });
 
-  const [copyText, setCopyText] = useState('');
+  // Function to get badge values based on conditions
+  const getBadgeValue = (badge, wanderberry) => {
+    if (badge === "Tamer") return 2;
+    if ((badge === "Nurturing" || badge === "Agriculture") && wanderberry) return 2;
+    return 1;
+  };
+
+    // Calculate total badge value including Wanderberry and Overachiever bonuses
+    const calculateTotalBadgeValue = (badges, overachiever, wanderberry) => {
+        let totalValue = 0;
+    
+        badges.forEach((badge) => {
+          totalValue += getBadgeValue(badge, wanderberry);
+        });
+    
+        if (wanderberry) totalValue += 2;
+        if (overachiever) totalValue += 5;
+    
+        return totalValue;
+      };
+
+      const handleAddCharacter = () => {
+        const badges = [badge1, badge2, badge3].filter(Boolean);
+        const totalBadgeValue = calculateTotalBadgeValue(badges, overachiever, wanderberry);
+    
+        const newCharacter = {
+          characterName,
+          badges: badges.map((badge) => ({
+            name: badge,
+            value: getBadgeValue(badge),
+          })),
+          overachiever,
+          wanderberry,
+          totalBadgeValue,
+        };
+    
+        const updatedCharacters = [...characters, newCharacter];
+        setCharacters(updatedCharacters);
+    
+        // Reset character form inputs
+        setCharacterName('');
+        setBadge1('');
+        setBadge2('');
+        setBadge3('');
+        setOverachiever(false);
+        setWanderberry(false);
+      };
 
   const calculateRewards = () => {
     let totalCoins = parseInt(baseReward);
@@ -88,6 +138,33 @@ function RewardForm() {
       totalCoins += epicQuestBonuses.moodboard * 5;
     }
 
+     // Add character badge breakdown
+     characters.forEach((character) => {
+        let badgeDetails = `${character.characterName} Badges: `;
+        let badgeValueTotal = 0;
+  
+        character.badges.forEach((badge) => {
+          badgeValueTotal += badge.value;
+          badgeDetails += `${badge.name} (${badge.value}c) + `;
+        });
+  
+        // Include additional badges
+        if (character.wanderberry) {
+          badgeValueTotal += 2;
+          badgeDetails += `Wanderberry (2c) + `;
+        }
+        if (character.overachiever) {
+          badgeValueTotal += 5;
+          badgeDetails += `Overachiever (5c) + `;
+        }
+  
+        // Clean up the trailing " + " and show total badge value
+        badgeDetails = badgeDetails.slice(0, -3); // Remove the last " + "
+        badgeDetails += `= ${badgeValueTotal}c\n`;
+  
+        breakdown += badgeDetails;
+    });
+
     breakdown += `\nTotal Coins: ${totalCoins}`;
 
     // Set the formatted text to copy
@@ -98,6 +175,14 @@ function RewardForm() {
     e.preventDefault();
     calculateRewards();
   };
+
+    // Character form state
+    const [characterName, setCharacterName] = useState('');
+    const [badge1, setBadge1] = useState('');
+    const [badge2, setBadge2] = useState('');
+    const [badge3, setBadge3] = useState('');
+    const [overachiever, setOverachiever] = useState(false);
+    const [wanderberry, setWanderberry] = useState(false);
 
   return (
     <Form onSubmit={handleSubmit} className="p-4 border rounded bg-light">
@@ -239,11 +324,90 @@ function RewardForm() {
         </Row>
       </Form.Group>
 
-      <CharacterBadgeForm
-  onCharacterBadgeChange={(characterData) => {
+       {/* Character Badge Form */}
+       <Button
+          variant="secondary"
+          onClick={() => setShowCharacterForm(!showCharacterForm)}
+        >
+          {showCharacterForm ? "Hide Character Form" : "Add Character"}
+        </Button>
 
-  }}
-/>
+        {showCharacterForm && (
+          <div className="mt-3 p-3 border rounded bg-light">
+            <Form.Group className="mb-3">
+              <Form.Label>Character Name</Form.Label>
+              <Form.Control
+                type="text"
+                value={characterName}
+                onChange={(e) => setCharacterName(e.target.value)}
+                placeholder="Enter character name"
+              />
+            </Form.Group>
+
+            <Row className="mb-3">
+              <Col>
+                <Form.Label>Badge 1</Form.Label>
+                <Form.Select value={badge1} onChange={(e) => setBadge1(e.target.value)}>
+                  <option value="">Select a badge</option>
+                  {badges.map((badge) => (
+                    <option key={badge} value={badge}>
+                      {badge}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Col>
+
+              <Col>
+                <Form.Label>Badge 2</Form.Label>
+                <Form.Select value={badge2} onChange={(e) => setBadge2(e.target.value)}>
+                  <option value="">Select a badge</option>
+                  {badges.map((badge) => (
+                    <option key={badge} value={badge}>
+                      {badge}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Col>
+
+              <Col>
+                <Form.Label>Badge 3</Form.Label>
+                <Form.Select value={badge3} onChange={(e) => setBadge3(e.target.value)}>
+                  <option value="">Select a badge</option>
+                  {badges.map((badge) => (
+                    <option key={badge} value={badge}>
+                      {badge}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Col>
+            </Row>
+
+            <Form.Group className="mb-3">
+              <Form.Check
+                type="checkbox"
+                label="Overachiever Badge (5c)"
+                checked={overachiever}
+                onChange={(e) => setOverachiever(e.target.checked)}
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Check
+                type="checkbox"
+                label="Wanderberry Badge (2c)"
+                checked={wanderberry}
+                onChange={(e) => setWanderberry(e.target.checked)}
+              />
+            </Form.Group>
+
+            <Button
+              variant="primary"
+              onClick={handleAddCharacter}
+            >
+              Add Character
+            </Button>
+          </div>
+        )}
 
       <Button variant="primary" type="submit">Calculate Rewards</Button>
 

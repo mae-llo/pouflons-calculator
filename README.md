@@ -28,6 +28,8 @@ Total Coin Payout
 - Add in WC bonus calculation (submission WC - max WC requirement) / 250 \* 2c. (Basically: for each 250 words over the WC requirement the submission is, you get 2c)
 - Make it so that the character calculations get added to the entire 'calculate rewards' section
 - Tidy code base
+- When you 'add character and badges' it clears out the form for the next entry
+- Not clearing the character field immediately but just adding more components when a user hits 'add character' so they can add/edit multiple at a time.
 - Make it visually better
 - Add art support (currently just writing)
 - Add collab support (will be easy, just multiplying the final result by .75)
