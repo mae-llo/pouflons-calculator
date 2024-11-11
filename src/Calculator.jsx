@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Form, Button, Col, Row, InputGroup } from 'react-bootstrap';
-import CharacterBadgeForm from './CharacterBadgeForm';
+import CharacterBadgeForm from './assets/CharacterBadgeForm';
 
 function RewardForm() {
   const [baseReward, setBaseReward] = useState(0);
