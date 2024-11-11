@@ -14,7 +14,7 @@ function RewardForm() {
   });
   
   const [bonuses, setBonuses] = useState({
-    sceneSetting: false,
+    settingBonus: false,
     featuredCharacter: false,
   });
   
@@ -38,7 +38,7 @@ function RewardForm() {
 
     // Applicable Items
     if (items.radBandana) {
-      breakdown += `Rad Bandana: 1 coin\n`;
+      breakdown += `Rad Bandana: 1c\n`;
       totalCoins += 1;
     }
     if (items.plainSatchel) {
@@ -48,6 +48,16 @@ function RewardForm() {
     if (items.badgeOMatic) {
       breakdown += `Badge-o-matic roll\n`;
       totalCoins += 1;
+    }
+
+    if (bonuses.featuredCharacter){
+        breakdown += `Featured Character: 2c\n`;
+        totalCoins += 2;
+    }
+
+    if (bonuses.settingBonus){
+        breakdown += `Setting Bonus: 2c\n`;
+        totalCoins += 2;
     }
 
     // Repeatable Bonuses
@@ -144,6 +154,23 @@ function RewardForm() {
             label="Badge-o-matic" 
             checked={items.badgeOMatic} 
             onChange={() => setItems({ ...items, badgeOMatic: !items.badgeOMatic })} 
+          />
+        </InputGroup>
+      </Form.Group>
+      <Form.Group className="mb-3">
+        <Form.Label>Other Bonuses</Form.Label>
+        <InputGroup>
+          <Form.Check 
+            type="checkbox" 
+            label="Featured Character" 
+            checked={bonuses.featuredCharacter} 
+            onChange={() => setBonuses({ ...bonuses, featuredCharacter: !bonuses.featuredCharacter })} 
+          />
+          <Form.Check 
+            type="checkbox" 
+            label="Setting Bonus" 
+            checked={bonuses.settingBonus} 
+            onChange={() => setBonuses({ ...bonuses, settingBonus: !bonuses.settingBonus })} 
           />
         </InputGroup>
       </Form.Group>
