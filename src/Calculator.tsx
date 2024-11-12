@@ -123,7 +123,10 @@ const calculateRewards = (values: Inputs) => {
 
   let totalCoins = baseReward;
   let breakdown = `Base Rewards: ${baseReward}c\n`;
-  breakdown += `WC: ${wc}\n`;
+
+  if (wc > 0) {
+    breakdown += `WC: ${wc}\n`;
+  }
 
   let modifiedWC = wc;
   if (modifiedWC > 1500) {
@@ -223,8 +226,8 @@ const calculateRewards = (values: Inputs) => {
     breakdown += badgeDetails;
   });
 
-  breakdown += `\nTotal Bonus: ${totalCoins - baseReward}`;
-  breakdown += `\nTotal Coins: ${totalCoins}`;
+  breakdown += `\nTotal Bonus: ${totalCoins - baseReward}c`;
+  breakdown += `\nTotal Coins: ${totalCoins}c`;
 
   return breakdown;
 };
@@ -232,26 +235,28 @@ const calculateRewards = (values: Inputs) => {
 function RewardForm() {
   const [copyText, setCopyText] = useState("");
 
-  const { register, handleSubmit, control } = useForm<Inputs>({
-    defaultValues: {
-      baseReward: 0,
-      wcReq: 0,
-      wc: 0,
-      characters: [],
-      items: { plainSatchel: false, badgeOMatic: false },
-      bonuses: { featuredCharacter: false, settingBonus: false },
-      repeatableBonuses: {
-        extraCharacter: 0,
-        pippets: 0,
-        fauna: 0,
-        megafauna: 0,
+  const { register, handleSubmit, control, formState, reset } = useForm<Inputs>(
+    {
+      defaultValues: {
+        baseReward: 0,
+        wcReq: 0,
+        wc: 0,
+        characters: [],
+        items: { plainSatchel: false, badgeOMatic: false },
+        bonuses: { featuredCharacter: false, settingBonus: false },
+        repeatableBonuses: {
+          extraCharacter: 0,
+          pippets: 0,
+          fauna: 0,
+          megafauna: 0,
+        },
+        epicQuestBonuses: {
+          summary: 0,
+          moodboard: false,
+        },
       },
-      epicQuestBonuses: {
-        summary: 0,
-        moodboard: false,
-      },
-    },
-  });
+    }
+  );
 
   const { append, remove, fields } = useFieldArray({
     control,
@@ -270,6 +275,15 @@ function RewardForm() {
 
   const handleRemoveCharacter = (index: number) => {
     remove(index);
+    if (formState.isSubmitted) {
+      handleSubmit(onSubmit)();
+    }
+  };
+
+  const handleClear = () => {
+    reset({});
+    remove();
+    setCopyText("");
   };
 
   const onSubmit = (values: Inputs) => {
@@ -477,7 +491,9 @@ function RewardForm() {
           </Form.Group>
           <Button
             variant="primary"
-            onClick={() => handleRemoveCharacter(index)}
+            onClick={() => {
+              handleRemoveCharacter(index);
+            }}
           >
             Remove Character
           </Button>
@@ -496,16 +512,23 @@ function RewardForm() {
         </Button>
       </Col>
       {copyText && (
-        <Form.Group className="mt-4">
-          <Form.Label>Copy/Paste Result</Form.Label>
-          <Form.Control
-            as="textarea"
-            value={copyText}
-            readOnly
-            rows={4}
-            onClick={(e) => e.currentTarget.select()}
-          />
-        </Form.Group>
+        <>
+          <Form.Group className="mt-4">
+            <Form.Label>Copy/Paste Result</Form.Label>
+            <Form.Control
+              as="textarea"
+              value={copyText}
+              readOnly
+              rows={4}
+              onClick={(e) => e.currentTarget.select()}
+            />
+          </Form.Group>
+          <Col>
+            <Button variant="primary" onClick={handleClear}>
+              Clear Form
+            </Button>
+          </Col>
+        </>
       )}
     </Form>
   );

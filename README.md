@@ -29,7 +29,6 @@ Total Coin Payout
 
 High Priority:
 
-- When a character is removed, their results need to disappear from the copy/paste results as well... not just the page. Is this possible?
 - Add collab support (will be easy, just multiplying the final result by .75) ... but, bandana/badges can't be used on collabs. If the 'collab' option is toggled, disable the add character button (And remove all current character info)
 - Add safari badge --> normally 1c, but 2c if a fauna or megafauna is present
 - Add better support for error users
@@ -47,6 +46,8 @@ Low Priority:
 
 # Completed
 
+- Add a reset form button
+- When a character is removed, their results need to disappear from the copy/paste results as well... not just the page.
 - Add in WC bonus calculation (submission WC - max WC requirement) / 250 \* 2c. (Basically: for each 250 words over the WC requirement the submission is, you get 2c)
 - Rad Bandana should be a character-specific bonus (each character can have it, rather than one per piece)
 - Make it so adding a character doesn't create the 'added characters' thing anymore. Just have it create another 'form' that can be filled out so users can add a new character while also being able to edit their previous characters.
