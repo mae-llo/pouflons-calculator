@@ -36,6 +36,8 @@ High Priority:
 Myehhhh:
 
 - Tidy code base
+- When you 'add character and badges' it clears out the form for the next entry
+- Not clearing the character field immediately but just adding more components when a user hits 'add character' so they can add/edit multiple at a time.
 - Make it visually better
 
 Low Priority:
