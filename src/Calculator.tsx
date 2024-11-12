@@ -140,8 +140,8 @@ const calculateRewards = (values: Inputs) => {
 
   // Repeatable Bonuses
   if (repeatableBonuses.extraCharacter > 0) {
-    breakdown += `Extra Character x${repeatableBonuses.extraCharacter}: ${repeatableBonuses.extraCharacter * 1} coins\n`;
-    totalCoins += repeatableBonuses.extraCharacter * 1;
+    breakdown += `Extra Character x${repeatableBonuses.extraCharacter}: ${repeatableBonuses.extraCharacter} coins\n`;
+    totalCoins += repeatableBonuses.extraCharacter;
   }
   if (repeatableBonuses.pippets > 0) {
     breakdown += `Pippets x${repeatableBonuses.pippets}: ${repeatableBonuses.pippets} coins\n`;
@@ -201,13 +201,7 @@ const calculateRewards = (values: Inputs) => {
 function RewardForm() {
   const [copyText, setCopyText] = useState("");
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-    control,
-  } = useForm<Inputs>();
+  const { register, handleSubmit, control } = useForm<Inputs>();
 
   const { append, fields } = useFieldArray({ control, name: "characters" });
 
