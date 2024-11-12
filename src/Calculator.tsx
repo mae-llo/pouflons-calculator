@@ -73,8 +73,7 @@ type Inputs = {
   wordCountActual: number;
   characters: {
     name: string;
-    // could potentially remove `name` and just make this a string instead of an object
-    badges: { name: (typeof badges)[number] }[];
+    badges: (typeof badges)[number][];
     wanderberry: boolean;
     overachiever: boolean;
   }[];
@@ -88,7 +87,7 @@ type Inputs = {
   };
   epicQuestBonuses: {
     summary: number;
-    moodboard: number;
+    moodboard: boolean;
   };
 };
 
@@ -115,6 +114,7 @@ const calculateRewards = (values: Inputs) => {
     epicQuestBonuses,
     characters,
   } = values;
+
   let totalCoins = baseReward;
   let breakdown = `Base Rewards: ${baseReward} coins\n`;
 
@@ -165,9 +165,9 @@ const calculateRewards = (values: Inputs) => {
     breakdown += `Summary x${epicQuestBonuses.summary}: ${epicQuestBonuses.summary * 3} coins\n`;
     totalCoins += epicQuestBonuses.summary * 3;
   }
-  if (epicQuestBonuses.moodboard > 0) {
+  if (epicQuestBonuses.moodboard) {
     breakdown += `Moodboard/Playlist: 5 coins\n`;
-    totalCoins += epicQuestBonuses.moodboard * 5;
+    totalCoins += 5;
   }
 
   // Add character badge breakdown
@@ -175,13 +175,13 @@ const calculateRewards = (values: Inputs) => {
     let badgeDetails = `${character.name} Badges: `;
     let badgeValueTotal = 0;
 
-    character.badges.forEach((badge) => {
-      const modifiedBadgeValue = getBadgeValue(badge.name, {
+    character.badges.filter(Boolean).forEach((badge) => {
+      const modifiedBadgeValue = getBadgeValue(badge, {
         wanderberry: character.wanderberry,
         overachiever: character.overachiever,
       });
       badgeValueTotal += modifiedBadgeValue;
-      badgeDetails += `${badge.name} (${modifiedBadgeValue}c) + `;
+      badgeDetails += `${badge} (${modifiedBadgeValue}c) + `;
     });
 
     // Include additional badges
@@ -209,7 +209,26 @@ const calculateRewards = (values: Inputs) => {
 function RewardForm() {
   const [copyText, setCopyText] = useState("");
 
-  const { register, handleSubmit, control } = useForm<Inputs>();
+  const { register, handleSubmit, control } = useForm<Inputs>({
+    defaultValues: {
+      baseReward: 0,
+      wordCountReq: 0,
+      wordCountActual: 0,
+      characters: [],
+      items: { radBandana: false, plainSatchel: false, badgeOMatic: false },
+      bonuses: { featuredCharacter: false, settingBonus: false },
+      repeatableBonuses: {
+        extraCharacter: 0,
+        pippets: 0,
+        fauna: 0,
+        megafauna: 0,
+      },
+      epicQuestBonuses: {
+        summary: 0,
+        moodboard: false,
+      },
+    },
+  });
 
   const { append, fields } = useFieldArray({ control, name: "characters" });
 
@@ -223,6 +242,7 @@ function RewardForm() {
   };
 
   const onSubmit = (values: Inputs) => {
+    console.log(values);
     const breakdown = calculateRewards(values);
     setCopyText(breakdown);
   };
@@ -236,15 +256,24 @@ function RewardForm() {
         <Col>
           <Form.Group as={Col} controlId="baseReward">
             <Form.Label>Base Reward</Form.Label>
-            <Form.Control type="number" {...register("baseReward")} />
+            <Form.Control
+              type="number"
+              {...register("baseReward", { valueAsNumber: true })}
+            />
           </Form.Group>
           <Form.Group as={Col} controlId="wcReq">
             <Form.Label>WC Req (Max)</Form.Label>
-            <Form.Control type="number" {...register("wordCountReq")} />
+            <Form.Control
+              type="number"
+              {...register("wordCountReq", { valueAsNumber: true })}
+            />
           </Form.Group>
           <Form.Group as={Col} controlId="wcSubm">
             <Form.Label>WC of Submission</Form.Label>
-            <Form.Control type="number" {...register("wordCountActual")} />
+            <Form.Control
+              type="number"
+              {...register("wordCountActual", { valueAsNumber: true })}
+            />
           </Form.Group>
         </Col>
 
@@ -294,28 +323,34 @@ function RewardForm() {
             <Form.Label>Extra Character</Form.Label>
             <Form.Control
               type="number"
-              {...register("repeatableBonuses.extraCharacter")}
+              {...register("repeatableBonuses.extraCharacter", {
+                valueAsNumber: true,
+              })}
             />
           </Col>
           <Col>
             <Form.Label>Pippets</Form.Label>
             <Form.Control
               type="number"
-              {...register("repeatableBonuses.pippets")}
+              {...register("repeatableBonuses.pippets", {
+                valueAsNumber: true,
+              })}
             />
           </Col>
           <Col>
             <Form.Label>Fauna</Form.Label>
             <Form.Control
               type="number"
-              {...register("repeatableBonuses.fauna")}
+              {...register("repeatableBonuses.fauna", { valueAsNumber: true })}
             />
           </Col>
           <Col>
             <Form.Label>Megafauna</Form.Label>
             <Form.Control
               type="number"
-              {...register("repeatableBonuses.megafauna")}
+              {...register("repeatableBonuses.megafauna", {
+                valueAsNumber: true,
+              })}
             />
           </Col>
         </Row>
@@ -328,7 +363,7 @@ function RewardForm() {
             <Form.Label>Story Summaries</Form.Label>
             <Form.Control
               type="number"
-              {...register("epicQuestBonuses.summary")}
+              {...register("epicQuestBonuses.summary", { valueAsNumber: true })}
             />
           </Col>
           <Col>
