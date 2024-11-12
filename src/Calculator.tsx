@@ -76,8 +76,9 @@ type Inputs = {
     badges: (typeof badges)[number][];
     wanderberry: boolean;
     overachiever: boolean;
+    radBandana: boolean;
   }[];
-  items: { radBandana: boolean; plainSatchel: boolean; badgeOMatic: boolean };
+  items: { plainSatchel: boolean; badgeOMatic: boolean };
   bonuses: { featuredCharacter: boolean; settingBonus: boolean };
   repeatableBonuses: {
     extraCharacter: number;
@@ -94,7 +95,7 @@ type Inputs = {
 // Function to get badge values based on conditions
 const getBadgeValue = (
   badge: (typeof badges)[number],
-  modifiers: { wanderberry?: boolean; overachiever?: boolean },
+  modifiers: { wanderberry?: boolean; overachiever?: boolean }
 ) => {
   if (badge === "Tamer") return 2;
   if (modifiers.wanderberry) {
@@ -119,10 +120,6 @@ const calculateRewards = (values: Inputs) => {
   let breakdown = `Base Rewards: ${baseReward} coins\n`;
 
   // Applicable Items
-  if (items.radBandana) {
-    breakdown += `Rad Bandana: 1c\n`;
-    totalCoins += 1;
-  }
   if (items.plainSatchel) {
     breakdown += `Plain Satchel extra roll\n`;
     totalCoins += 1;
@@ -172,7 +169,7 @@ const calculateRewards = (values: Inputs) => {
 
   // Add character badge breakdown
   characters.forEach((character) => {
-    let badgeDetails = `${character.name} Badges: `;
+    let badgeDetails = `${character.name} Badges & Bandana: `;
     let badgeValueTotal = 0;
 
     character.badges.filter(Boolean).forEach((badge) => {
@@ -184,7 +181,7 @@ const calculateRewards = (values: Inputs) => {
       badgeDetails += `${badge} (${modifiedBadgeValue}c) + `;
     });
 
-    // Include additional badges
+    // Include additional badges and items
     if (character.wanderberry) {
       badgeValueTotal += 2;
       badgeDetails += `Wanderberry (2c) + `;
@@ -192,6 +189,11 @@ const calculateRewards = (values: Inputs) => {
     if (character.overachiever) {
       badgeValueTotal += 5;
       badgeDetails += `Overachiever (5c) + `;
+    }
+
+    if (character.radBandana) {
+      badgeDetails += `Rad Bandana: 1c`;
+      badgeValueTotal += 1;
     }
 
     // Clean up the trailing " + " and show total badge value
@@ -215,7 +217,7 @@ function RewardForm() {
       wordCountReq: 0,
       wordCountActual: 0,
       characters: [],
-      items: { radBandana: false, plainSatchel: false, badgeOMatic: false },
+      items: { plainSatchel: false, badgeOMatic: false },
       bonuses: { featuredCharacter: false, settingBonus: false },
       repeatableBonuses: {
         extraCharacter: 0,
@@ -230,7 +232,10 @@ function RewardForm() {
     },
   });
 
-  const { append, fields } = useFieldArray({ control, name: "characters" });
+  const { append, remove, fields } = useFieldArray({
+    control,
+    name: "characters",
+  });
 
   const handleAddCharacter = () => {
     append({
@@ -238,11 +243,17 @@ function RewardForm() {
       badges: [],
       overachiever: false,
       wanderberry: false,
+      radBandana: false,
     });
   };
 
+  const handleRemoveCharacter = (index: number) => {
+    console.log(index);
+    remove(index);
+  };
+
   const onSubmit = (values: Inputs) => {
-    console.log(values);
+    // console.log(values);
     const breakdown = calculateRewards(values);
     setCopyText(breakdown);
   };
@@ -281,11 +292,6 @@ function RewardForm() {
           <Form.Group className="mb-3">
             <Form.Label>Applicable Items</Form.Label>
             <InputGroup>
-              <Form.Check
-                type="checkbox"
-                label="Rad Bandana"
-                {...register("items.radBandana")}
-              />
               <Form.Check
                 type="checkbox"
                 label="Plain Satchel"
@@ -432,25 +438,38 @@ function RewardForm() {
               label="Overachiever Badge (5c)"
               {...register(`characters.${index}.overachiever`)}
             />
-          </Form.Group>
-
-          <Form.Group className="mb-3">
             <Form.Check
               type="checkbox"
               label="Wanderberry Badge (2c)"
               {...register(`characters.${index}.wanderberry`)}
             />
+            <Form.Check
+              type="checkbox"
+              label="Rad Bandana (1c)"
+              {...register(`characters.${index}.radBandana`)}
+            />
           </Form.Group>
+          {index}
+          <Button
+            variant="primary"
+            onClick={() => handleRemoveCharacter(index)}
+          >
+            Remove Character
+          </Button>
         </div>
       ))}
-      <Button variant="primary" onClick={handleAddCharacter}>
-        Add Character
-      </Button>
 
-      <Button variant="primary" type="submit">
-        Calculate Rewards
-      </Button>
+      <Col>
+        <Button variant="primary" onClick={handleAddCharacter}>
+          Add Character
+        </Button>
+      </Col>
 
+      <Col>
+        <Button variant="primary" type="submit">
+          Calculate Rewards
+        </Button>
+      </Col>
       {copyText && (
         <Form.Group className="mt-4">
           <Form.Label>Copy/Paste Result</Form.Label>
