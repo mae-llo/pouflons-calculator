@@ -73,7 +73,8 @@ type Inputs = {
   wordCountActual: number;
   characters: {
     name: string;
-    badges: { name: (typeof badges)[number]; value: number }[];
+    // could potentially remove `name` and just make this a string instead of an object
+    badges: { name: (typeof badges)[number] }[];
     wanderberry: boolean;
     overachiever: boolean;
   }[];
@@ -94,11 +95,14 @@ type Inputs = {
 // Function to get badge values based on conditions
 const getBadgeValue = (
   badge: (typeof badges)[number],
-  wanderberry?: boolean,
+  modifiers: { wanderberry?: boolean; overachiever?: boolean },
 ) => {
   if (badge === "Tamer") return 2;
-  if ((badge === "Nurturing" || badge === "Agriculture") && wanderberry)
-    return 2;
+  if (modifiers.wanderberry) {
+    if (badge === "Nurturing" || badge === "Agriculture") {
+      return 2;
+    }
+  }
   return 1;
 };
 
@@ -172,8 +176,12 @@ const calculateRewards = (values: Inputs) => {
     let badgeValueTotal = 0;
 
     character.badges.forEach((badge) => {
-      badgeValueTotal += badge.value;
-      badgeDetails += `${badge.name} (${badge.value}c) + `;
+      const modifiedBadgeValue = getBadgeValue(badge.name, {
+        wanderberry: character.wanderberry,
+        overachiever: character.overachiever,
+      });
+      badgeValueTotal += modifiedBadgeValue;
+      badgeDetails += `${badge.name} (${modifiedBadgeValue}c) + `;
     });
 
     // Include additional badges
@@ -204,20 +212,6 @@ function RewardForm() {
   const { register, handleSubmit, control } = useForm<Inputs>();
 
   const { append, fields } = useFieldArray({ control, name: "characters" });
-
-  // Calculate total badge value including Wanderberry and Overachiever bonuses
-  const calculateTotalBadgeValue = (badges, overachiever, wanderberry) => {
-    let totalValue = 0;
-
-    badges.forEach((badge) => {
-      totalValue += getBadgeValue(badge, wanderberry);
-    });
-
-    if (wanderberry) totalValue += 2;
-    if (overachiever) totalValue += 5;
-
-    return totalValue;
-  };
 
   const handleAddCharacter = () => {
     append({
