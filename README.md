@@ -6,6 +6,8 @@ Based largely on the following:
 - [Coin Guide](https://www.play.pouflons.com/info/coins)
 
 I (applebabbles) am not associated with Pouflons staff. I am doing this for fun.
+Note: Currently, if you selected 'wanderberry badge' the calculator is under the assumption that you have included a wanderroot. Please do not select this badge if that is not the case.
+2nd Note: Currently, the safari badge gives 1c unless the wanderberry badge is active... I need to code a way that it doesn't rely on the wanderberry badge but instead fauna/megafauna.
 
 Ideal output:
 
