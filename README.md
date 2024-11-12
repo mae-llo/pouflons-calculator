@@ -29,7 +29,6 @@ High Priority:
 
 - Add in WC bonus calculation (submission WC - max WC requirement) / 250 \* 2c. (Basically: for each 250 words over the WC requirement the submission is, you get 2c)
 - Add collab support (will be easy, just multiplying the final result by .75) ... but, bandana/badges can't be used on collabs. If the 'collab' option is toggled, disable the add character button (And remove all current character info)
-- Only one wanderberry badge may be claimed per piece, but it's a character specific item... maybe move it somewhere else? Or keep it in characters?
 
 Myehhhh:
 
@@ -39,7 +38,9 @@ Low Priority:
 
 - Add art support (currently just writing)
 - Add safari badge --> normally 1c, but 2c if a fauna or megafauna is present
-- Add better support for error users (users that click wanderberry badge, but didn't include a wanderroot in the piece, thus making the badge null and also nurturing, agriculture, etc would be worth only 1c instead of 2c)
+- Add better support for error users
+  - Users that click wanderberry badge, but didn't include a wanderroot in the piece, thus making the badge null and also nurturing, agriculture, etc would be worth only 1c instead of 2c
+  - Users that try to add more than one wanderberry per prompt (there can only be one) ... but it's a character specific badge so it should remain in characters
 
 # Completed
 

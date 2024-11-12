@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Form, Button, Col, Row, InputGroup } from "react-bootstrap";
-import CharacterBadgeForm from "./CharacterBadgeForm";
 import { useFieldArray, useForm } from "react-hook-form";
 
 const badges = [
@@ -99,7 +98,11 @@ const getBadgeValue = (
 ) => {
   if (badge === "Tamer") return 2;
   if (modifiers.wanderberry) {
-    if (badge === "Nurturing" || badge === "Agriculture") {
+    if (
+      badge === "Nurturing" ||
+      badge === "Agriculture" ||
+      badge === "Safari"
+    ) {
       return 2;
     }
   }
