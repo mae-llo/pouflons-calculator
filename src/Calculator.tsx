@@ -68,8 +68,8 @@ const badges = [
 
 type Inputs = {
   baseReward: number;
-  wordCountReq: number;
-  wordCountActual: number;
+  wcReq: number;
+  wc: number;
   characters: {
     name: string;
     badges: (typeof badges)[number][];
@@ -112,6 +112,8 @@ const getBadgeValue = (
 const calculateRewards = (values: Inputs) => {
   const {
     baseReward,
+    wcReq,
+    wc,
     items,
     bonuses,
     repeatableBonuses,
@@ -120,7 +122,22 @@ const calculateRewards = (values: Inputs) => {
   } = values;
 
   let totalCoins = baseReward;
-  let breakdown = `Base Rewards: ${baseReward} coins\n`;
+  let breakdown = `Base Rewards: ${baseReward}c\n`;
+  breakdown += `WC: ${wc}\n`;
+
+  let modifiedWC = wc;
+  if (modifiedWC > 1500) {
+    modifiedWC = 1500;
+  }
+
+  // Additional Length
+  if (modifiedWC >= wcReq + 250) {
+    let extraWords = modifiedWC - wcReq;
+    const extraChunks = Math.floor(extraWords / 250);
+
+    breakdown += `Additional Length x${extraChunks}: ${extraChunks * 2}c\n`;
+    totalCoins += extraChunks * 2;
+  }
 
   // Applicable Items
   if (items.plainSatchel) {
@@ -144,11 +161,11 @@ const calculateRewards = (values: Inputs) => {
 
   // Repeatable Bonuses
   if (repeatableBonuses.extraCharacter > 0) {
-    breakdown += `Extra Character x${repeatableBonuses.extraCharacter}: ${repeatableBonuses.extraCharacter} coins\n`;
+    breakdown += `Extra Character x${repeatableBonuses.extraCharacter}: ${repeatableBonuses.extraCharacter}c\n`;
     totalCoins += repeatableBonuses.extraCharacter;
   }
   if (repeatableBonuses.pippets > 0) {
-    breakdown += `Pippets x${repeatableBonuses.pippets}: ${repeatableBonuses.pippets} coins\n`;
+    breakdown += `Pippets x${repeatableBonuses.pippets}: ${repeatableBonuses.pippets}c\n`;
     totalCoins += repeatableBonuses.pippets;
   }
   if (repeatableBonuses.fauna > 0) {
@@ -156,23 +173,23 @@ const calculateRewards = (values: Inputs) => {
     totalCoins += repeatableBonuses.fauna;
   }
   if (repeatableBonuses.megafauna > 0) {
-    breakdown += `Megafauna x${repeatableBonuses.megafauna}: ${repeatableBonuses.megafauna} coins\n`;
+    breakdown += `Megafauna x${repeatableBonuses.megafauna}: ${repeatableBonuses.megafauna}c\n`;
     totalCoins += repeatableBonuses.megafauna;
   }
 
   // Epic Quest Bonuses
   if (epicQuestBonuses.summary > 0) {
-    breakdown += `Summary x${epicQuestBonuses.summary}: ${epicQuestBonuses.summary * 3} coins\n`;
+    breakdown += `Summary x${epicQuestBonuses.summary}: ${epicQuestBonuses.summary * 3}c\n`;
     totalCoins += epicQuestBonuses.summary * 3;
   }
   if (epicQuestBonuses.moodboard) {
-    breakdown += `Moodboard/Playlist: 5 coins\n`;
+    breakdown += `Moodboard/Playlist: 5c\n`;
     totalCoins += 5;
   }
 
   // Add character badge breakdown
   characters.forEach((character) => {
-    let badgeDetails = `${character.name} Badges & Bandana: `;
+    let badgeDetails = `${character.name} Bonuses: `;
     let badgeValueTotal = 0;
 
     character.badges.filter(Boolean).forEach((badge) => {
@@ -195,17 +212,18 @@ const calculateRewards = (values: Inputs) => {
     }
 
     if (character.radBandana) {
-      badgeDetails += `Rad Bandana: 1c`;
+      badgeDetails += `Rad Bandana (1c) + `;
       badgeValueTotal += 1;
     }
 
     // Clean up the trailing " + " and show total badge value
-    badgeDetails = badgeDetails.slice(0, -3); // Remove the last " + "
+    badgeDetails = badgeDetails.slice(0, -2); // Remove the last " +"
     badgeDetails += `= ${badgeValueTotal}c\n`;
 
     breakdown += badgeDetails;
   });
 
+  breakdown += `\nTotal Bonus: ${totalCoins - baseReward}`;
   breakdown += `\nTotal Coins: ${totalCoins}`;
 
   return breakdown;
@@ -217,8 +235,8 @@ function RewardForm() {
   const { register, handleSubmit, control } = useForm<Inputs>({
     defaultValues: {
       baseReward: 0,
-      wordCountReq: 0,
-      wordCountActual: 0,
+      wcReq: 0,
+      wc: 0,
       characters: [],
       items: { plainSatchel: false, badgeOMatic: false },
       bonuses: { featuredCharacter: false, settingBonus: false },
@@ -251,12 +269,10 @@ function RewardForm() {
   };
 
   const handleRemoveCharacter = (index: number) => {
-    console.log(index);
     remove(index);
   };
 
   const onSubmit = (values: Inputs) => {
-    // console.log(values);
     const breakdown = calculateRewards(values);
     setCopyText(breakdown);
   };
@@ -279,14 +295,14 @@ function RewardForm() {
             <Form.Label>WC Req (Max)</Form.Label>
             <Form.Control
               type="number"
-              {...register("wordCountReq", { valueAsNumber: true })}
+              {...register("wcReq", { valueAsNumber: true })}
             />
           </Form.Group>
           <Form.Group as={Col} controlId="wcSubm">
             <Form.Label>WC of Submission</Form.Label>
             <Form.Control
               type="number"
-              {...register("wordCountActual", { valueAsNumber: true })}
+              {...register("wc", { valueAsNumber: true })}
             />
           </Form.Group>
         </Col>
@@ -296,11 +312,13 @@ function RewardForm() {
             <Form.Label>Applicable Items</Form.Label>
             <InputGroup>
               <Form.Check
+                className="me-3"
                 type="checkbox"
                 label="Plain Satchel"
                 {...register("items.plainSatchel")}
               />
               <Form.Check
+                className="me-3"
                 type="checkbox"
                 label="Badge-o-matic"
                 {...register("items.badgeOMatic")}
@@ -311,11 +329,13 @@ function RewardForm() {
             <Form.Label>Other Bonuses</Form.Label>
             <InputGroup>
               <Form.Check
+                className="me-3"
                 type="checkbox"
                 label="Featured Character"
                 {...register("bonuses.featuredCharacter")}
               />
               <Form.Check
+                className="me-3"
                 type="checkbox"
                 label="Setting Bonus"
                 {...register("bonuses.settingBonus")}
@@ -379,7 +399,7 @@ function RewardForm() {
             <Form.Label>Moodboard OR Playlist</Form.Label>
             <Form.Check
               type="checkbox"
-              label="Moodboard or Playlist"
+              label="Yes"
               {...register("epicQuestBonuses.moodboard")}
             />
           </Col>
@@ -437,22 +457,24 @@ function RewardForm() {
 
           <Form.Group className="mb-3">
             <Form.Check
+              inline
               type="checkbox"
               label="Overachiever Badge (5c)"
               {...register(`characters.${index}.overachiever`)}
             />
             <Form.Check
+              inline
               type="checkbox"
               label="Wanderberry Badge (2c)"
               {...register(`characters.${index}.wanderberry`)}
             />
             <Form.Check
+              inline
               type="checkbox"
               label="Rad Bandana (1c)"
               {...register(`characters.${index}.radBandana`)}
             />
           </Form.Group>
-          {index}
           <Button
             variant="primary"
             onClick={() => handleRemoveCharacter(index)}
