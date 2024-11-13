@@ -40,3 +40,11 @@
 .read-the-docs {
   color: #888;
 }
+
+.btn{
+  margin: 1rem auto;
+}
+
+.remove {
+  margin:0;
+}

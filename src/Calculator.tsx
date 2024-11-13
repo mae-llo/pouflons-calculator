@@ -1,3 +1,4 @@
+import React from "react";
 import { useState } from "react";
 import { Form, Button, Col, Row, InputGroup } from "react-bootstrap";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -109,7 +110,7 @@ const getBadgeValue = (
   return 1;
 };
 
-const calculateRewards = (values: Inputs) => {
+const calculateRewards = (values: Inputs, isCollab: boolean) => {
   const {
     baseReward,
     wcReq,
@@ -125,7 +126,7 @@ const calculateRewards = (values: Inputs) => {
   let breakdown = `Base Rewards: ${baseReward}c\n`;
 
   if (wc > 0) {
-    breakdown += `WC: ${wc}\n`;
+    breakdown += `WC: ${wc}\n\n`;
   }
 
   let modifiedWC = wc;
@@ -133,25 +134,25 @@ const calculateRewards = (values: Inputs) => {
     modifiedWC = 1500;
   }
 
+  // Applicable Items
+  if (items.plainSatchel) {
+    breakdown += `Plain Satchel extra roll\n`;
+  }
+  if (items.badgeOMatic) {
+    breakdown += `Badge-o-matic roll\n\n`;
+  }
+
   // Additional Length
   if (modifiedWC >= wcReq + 250) {
     let extraWords = modifiedWC - wcReq;
     const extraChunks = Math.floor(extraWords / 250);
+    console.log(extraChunks);
 
     breakdown += `Additional Length x${extraChunks}: ${extraChunks * 2}c\n`;
     totalCoins += extraChunks * 2;
   }
 
-  // Applicable Items
-  if (items.plainSatchel) {
-    breakdown += `Plain Satchel extra roll\n`;
-    totalCoins += 1;
-  }
-  if (items.badgeOMatic) {
-    breakdown += `Badge-o-matic roll\n`;
-    totalCoins += 1;
-  }
-
+  // Other Bonuses
   if (bonuses.featuredCharacter) {
     breakdown += `Featured Character: 2c\n`;
     totalCoins += 2;
@@ -224,19 +225,24 @@ const calculateRewards = (values: Inputs) => {
     badgeDetails += `= ${badgeValueTotal}c\n`;
 
     breakdown += badgeDetails;
+    totalCoins += badgeValueTotal;
   });
 
   breakdown += `\nTotal Bonus: ${totalCoins - baseReward}c`;
   breakdown += `\nTotal Coins: ${totalCoins}c`;
-
+  if (isCollab) {
+    breakdown += `\nCollab Debuff: ${totalCoins}c x 1.5 / 2 = ${Math.ceil((totalCoins * 1.5) / 2)}c`;
+  }
   return breakdown;
 };
 
 function RewardForm() {
   const [copyText, setCopyText] = useState("");
+  const [isCollab, setIsCollab] = useState(false);
+  const [isEpic, setIsEpic] = useState(false);
 
-  const { register, handleSubmit, control, formState, reset } = useForm<Inputs>(
-    {
+  const { register, handleSubmit, control, formState, reset, setValue } =
+    useForm<Inputs>({
       defaultValues: {
         baseReward: 0,
         wcReq: 0,
@@ -255,8 +261,7 @@ function RewardForm() {
           moodboard: false,
         },
       },
-    }
-  );
+    });
 
   const { append, remove, fields } = useFieldArray({
     control,
@@ -286,8 +291,19 @@ function RewardForm() {
     setCopyText("");
   };
 
+  const handleCollabToggle = () => {
+    setIsCollab((prevState) => !prevState);
+    if (isCollab) {
+      handleClear;
+    }
+  };
+
+  const handleEpicToggle = () => {
+    setIsEpic((prevState) => !prevState);
+  };
+
   const onSubmit = (values: Inputs) => {
-    const breakdown = calculateRewards(values);
+    const breakdown = calculateRewards(values, isCollab);
     setCopyText(breakdown);
   };
 
@@ -356,6 +372,25 @@ function RewardForm() {
               />
             </InputGroup>
           </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Toggleable Effects</Form.Label>
+            <InputGroup>
+              <Form.Check
+                className="me-3"
+                type="switch"
+                label="Collaborative Work"
+                checked={isCollab}
+                onChange={handleCollabToggle}
+              />
+              <Form.Check
+                className="me-3"
+                type="switch"
+                label="Epic Quest"
+                checked={isEpic}
+                onChange={handleEpicToggle}
+              />
+            </InputGroup>
+          </Form.Group>
         </Col>
       </Row>
 
@@ -399,26 +434,30 @@ function RewardForm() {
         </Row>
       </Form.Group>
 
-      <Form.Group className="mb-3">
-        <Form.Label>Epic Quest Bonuses</Form.Label>
-        <Row>
-          <Col>
-            <Form.Label>Story Summaries</Form.Label>
-            <Form.Control
-              type="number"
-              {...register("epicQuestBonuses.summary", { valueAsNumber: true })}
-            />
-          </Col>
-          <Col>
-            <Form.Label>Moodboard OR Playlist</Form.Label>
-            <Form.Check
-              type="checkbox"
-              label="Yes"
-              {...register("epicQuestBonuses.moodboard")}
-            />
-          </Col>
-        </Row>
-      </Form.Group>
+      {isEpic && (
+        <Form.Group className="mb-3">
+          <Form.Label>Epic Quest Bonuses</Form.Label>
+          <Row>
+            <Col>
+              <Form.Label>Story Summaries</Form.Label>
+              <Form.Control
+                type="number"
+                {...register("epicQuestBonuses.summary", {
+                  valueAsNumber: true,
+                })}
+              />
+            </Col>
+            <Col>
+              <Form.Label>Moodboard OR Playlist</Form.Label>
+              <Form.Check
+                type="checkbox"
+                label="Yes"
+                {...register("epicQuestBonuses.moodboard")}
+              />
+            </Col>
+          </Row>
+        </Form.Group>
+      )}
 
       {fields.map((field, index) => (
         <div className="mt-3 p-3 border rounded bg-light" key={field.id}>
@@ -469,7 +508,9 @@ function RewardForm() {
             </Col>
           </Row>
 
-          <Form.Group className="mb-3">
+          <Form.Group className="mb-3 ">
+            <Form.Label>Character Bonuses</Form.Label>
+            <br />
             <Form.Check
               inline
               type="checkbox"
@@ -491,6 +532,7 @@ function RewardForm() {
           </Form.Group>
           <Button
             variant="primary"
+            className="remove"
             onClick={() => {
               handleRemoveCharacter(index);
             }}
@@ -500,11 +542,13 @@ function RewardForm() {
         </div>
       ))}
 
-      <Col>
-        <Button variant="primary" onClick={handleAddCharacter}>
-          Add Character
-        </Button>
-      </Col>
+      {!isCollab && (
+        <Col>
+          <Button variant="primary" onClick={handleAddCharacter}>
+            Add Character
+          </Button>
+        </Col>
+      )}
 
       <Col>
         <Button variant="primary" type="submit">
