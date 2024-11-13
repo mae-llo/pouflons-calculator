@@ -1,101 +1,14 @@
-import React from "react";
+import { ChangeEvent } from "react";
 import { useState } from "react";
 import { Form, Button, Col, Row, InputGroup } from "react-bootstrap";
 import { useFieldArray, useForm } from "react-hook-form";
-
-const badges = [
-  "Agriculture",
-  "Art",
-  "Astronomy",
-  "Athletics",
-  "Aviator",
-  "Beloved",
-  "Boss",
-  "Buddy",
-  "Chivalrous",
-  "Clumsy",
-  "Commoner",
-  "Dancer",
-  "Detective",
-  "Eloquent",
-  "Flirty",
-  "Floriculture",
-  "Foodie",
-  "Geology",
-  "Healer",
-  "Hospitality",
-  "Inventor",
-  "Lazybones",
-  "Loner",
-  "Macabre",
-  "Merchant",
-  "Meteorology",
-  "Music",
-  "Nobility",
-  "Nurturing",
-  "Party",
-  "Performer",
-  "Ranger",
-  "Safari",
-  "Scholar",
-  "Seafarer",
-  "Smith",
-  "Tailor",
-  "Tamer",
-  "Thief",
-  "Traveler",
-  "Trickster",
-  "Urchin",
-  "Woodworker",
-  "Captain",
-  "City Guard",
-  "Hired Sword",
-  "Instructor",
-  "Royal Messanger",
-  "Scout",
-  "Squire",
-  "Templar",
-  "Village Guard",
-  "Air",
-  "Candle",
-  "Earth",
-  "Fire",
-  "Ice",
-  "Nature",
-  "Potion",
-  "Seeker",
-  "Water",
-] as const;
-
-type Inputs = {
-  baseReward: number;
-  wcReq: number;
-  wc: number;
-  characters: {
-    name: string;
-    badges: (typeof badges)[number][];
-    wanderberry: boolean;
-    overachiever: boolean;
-    radBandana: boolean;
-  }[];
-  items: { plainSatchel: boolean; badgeOMatic: boolean };
-  bonuses: { featuredCharacter: boolean; settingBonus: boolean };
-  repeatableBonuses: {
-    extraCharacter: number;
-    pippets: number;
-    fauna: number;
-    megafauna: number;
-  };
-  epicQuestBonuses: {
-    summary: number;
-    moodboard: boolean;
-  };
-};
+import { badges, FormFields } from "./form.types";
+import { CharacterForm } from "./CharacterForm";
 
 // Function to get badge values based on conditions
 const getBadgeValue = (
   badge: (typeof badges)[number],
-  modifiers: { wanderberry?: boolean; overachiever?: boolean }
+  modifiers: { wanderberry?: boolean; overachiever?: boolean },
 ) => {
   if (badge === "Tamer") return 2;
   if (modifiers.wanderberry) {
@@ -110,7 +23,7 @@ const getBadgeValue = (
   return 1;
 };
 
-const calculateRewards = (values: Inputs, isCollab: boolean) => {
+const calculateRewards = (values: FormFields, isCollab: boolean) => {
   const {
     baseReward,
     wcReq,
@@ -241,27 +154,27 @@ function RewardForm() {
   const [isCollab, setIsCollab] = useState(false);
   const [isEpic, setIsEpic] = useState(false);
 
-  const { register, handleSubmit, control, formState, reset, setValue } =
-    useForm<Inputs>({
-      defaultValues: {
-        baseReward: 0,
-        wcReq: 0,
-        wc: 0,
-        characters: [],
-        items: { plainSatchel: false, badgeOMatic: false },
-        bonuses: { featuredCharacter: false, settingBonus: false },
-        repeatableBonuses: {
-          extraCharacter: 0,
-          pippets: 0,
-          fauna: 0,
-          megafauna: 0,
-        },
-        epicQuestBonuses: {
-          summary: 0,
-          moodboard: false,
-        },
+  const form = useForm<FormFields>({
+    defaultValues: {
+      baseReward: 0,
+      wcReq: 0,
+      wc: 0,
+      characters: [],
+      items: { plainSatchel: false, badgeOMatic: false },
+      bonuses: { featuredCharacter: false, settingBonus: false },
+      repeatableBonuses: {
+        extraCharacter: 0,
+        pippets: 0,
+        fauna: 0,
+        megafauna: 0,
       },
-    });
+      epicQuestBonuses: {
+        summary: 0,
+        moodboard: false,
+      },
+    },
+  });
+  const { register, handleSubmit, control, formState, reset, setValue } = form;
 
   const { append, remove, fields } = useFieldArray({
     control,
@@ -286,15 +199,19 @@ function RewardForm() {
   };
 
   const handleClear = () => {
-    reset({});
-    remove();
+    // if you pass {} to this it will explicitly reset the form to an empty object.
+    // best to call it with no params since that will reset to the `defaultValues` defined above, which we need
+    reset();
     setCopyText("");
   };
 
-  const handleCollabToggle = () => {
+  const handleCollabToggle = (e: ChangeEvent<HTMLInputElement>) => {
     setIsCollab((prevState) => !prevState);
-    if (isCollab) {
-      handleClear;
+    /**
+     * remove all characters when 'collab' is enabled
+     */
+    if (e.currentTarget.checked) {
+      setValue("characters", []);
     }
   };
 
@@ -302,7 +219,7 @@ function RewardForm() {
     setIsEpic((prevState) => !prevState);
   };
 
-  const onSubmit = (values: Inputs) => {
+  const onSubmit = (values: FormFields) => {
     const breakdown = calculateRewards(values, isCollab);
     setCopyText(breakdown);
   };
@@ -310,9 +227,9 @@ function RewardForm() {
   return (
     <Form
       onSubmit={handleSubmit(onSubmit)}
-      className="p-4 border rounded bg-light"
+      className="p-4 border rounded bg-light d-flex flex-column gap-3"
     >
-      <Row className="mb-3">
+      <Row>
         <Col>
           <Form.Group as={Col} controlId="baseReward">
             <Form.Label>Base Reward</Form.Label>
@@ -336,109 +253,108 @@ function RewardForm() {
             />
           </Form.Group>
         </Col>
-
         <Col>
-          <Form.Group className="mb-3">
-            <Form.Label>Applicable Items</Form.Label>
-            <InputGroup>
-              <Form.Check
-                className="me-3"
-                type="checkbox"
-                label="Plain Satchel"
-                {...register("items.plainSatchel")}
-              />
-              <Form.Check
-                className="me-3"
-                type="checkbox"
-                label="Badge-o-matic"
-                {...register("items.badgeOMatic")}
-              />
-            </InputGroup>
+          <h6>Applicable Items</h6>
+          <Form.Group controlId="items.plainSatchel">
+            <Form.Check
+              inline
+              type="checkbox"
+              {...register("items.plainSatchel")}
+            />
+            <Form.Label>Plain Satchel</Form.Label>
           </Form.Group>
-          <Form.Group className="mb-3">
-            <Form.Label>Other Bonuses</Form.Label>
-            <InputGroup>
-              <Form.Check
-                className="me-3"
-                type="checkbox"
-                label="Featured Character"
-                {...register("bonuses.featuredCharacter")}
-              />
-              <Form.Check
-                className="me-3"
-                type="checkbox"
-                label="Setting Bonus"
-                {...register("bonuses.settingBonus")}
-              />
-            </InputGroup>
+          <Form.Group controlId="items.badgeOMatic">
+            <Form.Check
+              inline
+              type="checkbox"
+              {...register("items.badgeOMatic")}
+            />
+            <Form.Label>Badge-o-matic</Form.Label>
           </Form.Group>
-          <Form.Group className="mb-3">
-            <Form.Label>Toggleable Effects</Form.Label>
-            <InputGroup>
-              <Form.Check
-                className="me-3"
-                type="switch"
-                label="Collaborative Work"
-                checked={isCollab}
-                onChange={handleCollabToggle}
-              />
-              <Form.Check
-                className="me-3"
-                type="switch"
-                label="Epic Quest"
-                checked={isEpic}
-                onChange={handleEpicToggle}
-              />
-            </InputGroup>
+          <h6>Other Bonuses</h6>
+          <Form.Group controlId="bonuses.featuredCharacter">
+            <Form.Check
+              inline
+              type="checkbox"
+              {...register("bonuses.featuredCharacter")}
+            />
+            <Form.Label>Featured Character</Form.Label>
+          </Form.Group>
+
+          <Form.Group controlId="bonuses.settingBonus">
+            <Form.Check
+              inline
+              type="checkbox"
+              {...register("bonuses.settingBonus")}
+            />
+            <Form.Label>Setting Bonus</Form.Label>
+          </Form.Group>
+          <h6>Toggleable Effects</h6>
+          <Form.Group controlId="isCollab">
+            <Form.Check
+              inline
+              type="switch"
+              checked={isCollab}
+              onChange={handleCollabToggle}
+            />
+            <Form.Label>Collaborative Work</Form.Label>
+          </Form.Group>
+          <Form.Group controlId="isEpic">
+            <Form.Check
+              inline
+              type="switch"
+              checked={isEpic}
+              onChange={handleEpicToggle}
+            />
+            <Form.Label>Epic Quest</Form.Label>
           </Form.Group>
         </Col>
       </Row>
 
-      <Form.Group className="mb-3">
-        <Form.Label>Repeatable Bonuses</Form.Label>
-        <Row>
-          <Col>
-            <Form.Label>Extra Character</Form.Label>
-            <Form.Control
-              type="number"
-              {...register("repeatableBonuses.extraCharacter", {
-                valueAsNumber: true,
-              })}
-            />
-          </Col>
-          <Col>
-            <Form.Label>Pippets</Form.Label>
-            <Form.Control
-              type="number"
-              {...register("repeatableBonuses.pippets", {
-                valueAsNumber: true,
-              })}
-            />
-          </Col>
-          <Col>
-            <Form.Label>Fauna</Form.Label>
-            <Form.Control
-              type="number"
-              {...register("repeatableBonuses.fauna", { valueAsNumber: true })}
-            />
-          </Col>
-          <Col>
-            <Form.Label>Megafauna</Form.Label>
-            <Form.Control
-              type="number"
-              {...register("repeatableBonuses.megafauna", {
-                valueAsNumber: true,
-              })}
-            />
-          </Col>
-        </Row>
-      </Form.Group>
+      <h6>Repeatable Bonuses</h6>
+
+      <Row>
+        <Form.Group as={Col} controlId="repeatableBonuses.extraCharacter">
+          <Form.Label>Extra Character</Form.Label>
+          <Form.Control
+            type="number"
+            {...register("repeatableBonuses.extraCharacter", {
+              valueAsNumber: true,
+            })}
+          />
+        </Form.Group>
+        <Form.Group as={Col} controlId="repeatableBonuses.pippets">
+          <Form.Label>Pippets</Form.Label>
+          <Form.Control
+            type="number"
+            {...register("repeatableBonuses.pippets", {
+              valueAsNumber: true,
+            })}
+          />
+        </Form.Group>
+        <Form.Group as={Col} controlId="repeatableBonuses.fauna">
+          <Form.Label>Fauna</Form.Label>
+          <Form.Control
+            type="number"
+            {...register("repeatableBonuses.fauna", { valueAsNumber: true })}
+          />
+        </Form.Group>
+        <Form.Group as={Col} controlId="repeatableBonuses.megafauna">
+          <Form.Label>Megafauna</Form.Label>
+          <Form.Control
+            type="number"
+            {...register("repeatableBonuses.megafauna", {
+              valueAsNumber: true,
+            })}
+          />
+        </Form.Group>
+      </Row>
 
       {isEpic && (
-        <Form.Group className="mb-3">
-          <Form.Label>Epic Quest Bonuses</Form.Label>
+        <>
+          <h6>Epic Quest Bonuses</h6>
           <Row>
-            <Col>
+            <Form.Group as={Col} controlId="epicQuestBonuses.summary">
               <Form.Label>Story Summaries</Form.Label>
               <Form.Control
                 type="number"
@@ -446,99 +362,31 @@ function RewardForm() {
                   valueAsNumber: true,
                 })}
               />
-            </Col>
-            <Col>
+            </Form.Group>
+            <Form.Group as={Col} controlId="epicQuestBonuses.moodboard">
               <Form.Label>Moodboard OR Playlist</Form.Label>
               <Form.Check
                 type="checkbox"
                 label="Yes"
                 {...register("epicQuestBonuses.moodboard")}
               />
-            </Col>
+            </Form.Group>
           </Row>
-        </Form.Group>
+        </>
       )}
 
       {fields.map((field, index) => (
-        <div className="mt-3 p-3 border rounded bg-light" key={field.id}>
-          <Form.Group className="mb-3">
-            <Form.Label>Character Name</Form.Label>
-            <Form.Control
-              type="text"
-              {...register(`characters.${index}.name`)}
-              placeholder="Enter character name"
-            />
-          </Form.Group>
-
-          <Row className="mb-3">
-            <Col>
-              <Form.Label>Badge 1</Form.Label>
-              <Form.Select {...register(`characters.${index}.badges.0`)}>
-                <option value="">Select a badge</option>
-                {badges.map((badge) => (
-                  <option key={badge} value={badge}>
-                    {badge}
-                  </option>
-                ))}
-              </Form.Select>
-            </Col>
-
-            <Col>
-              <Form.Label>Badge 2</Form.Label>
-              <Form.Select {...register(`characters.${index}.badges.1`)}>
-                <option value="">Select a badge</option>
-                {badges.map((badge) => (
-                  <option key={badge} value={badge}>
-                    {badge}
-                  </option>
-                ))}
-              </Form.Select>
-            </Col>
-
-            <Col>
-              <Form.Label>Badge 3</Form.Label>
-              <Form.Select {...register(`characters.${index}.badges.2`)}>
-                <option value="">Select a badge</option>
-                {badges.map((badge) => (
-                  <option key={badge} value={badge}>
-                    {badge}
-                  </option>
-                ))}
-              </Form.Select>
-            </Col>
-          </Row>
-
-          <Form.Group className="mb-3 ">
-            <Form.Label>Character Bonuses</Form.Label>
-            <br />
-            <Form.Check
-              inline
-              type="checkbox"
-              label="Overachiever Badge (5c)"
-              {...register(`characters.${index}.overachiever`)}
-            />
-            <Form.Check
-              inline
-              type="checkbox"
-              label="Wanderberry Badge (2c)"
-              {...register(`characters.${index}.wanderberry`)}
-            />
-            <Form.Check
-              inline
-              type="checkbox"
-              label="Rad Bandana (1c)"
-              {...register(`characters.${index}.radBandana`)}
-            />
-          </Form.Group>
-          <Button
-            variant="primary"
-            className="remove"
-            onClick={() => {
+        <div
+          className="p-3 border rounded bg-light position-relative"
+          key={field.id}
+        >
+          <CharacterForm
+            form={form}
+            name={`characters.${index}`}
+            onRemove={() => {
               handleRemoveCharacter(index);
             }}
-          >
-            Remove Character
-          </Button>
+          />
         </div>
       ))}
 
@@ -555,9 +403,10 @@ function RewardForm() {
           Calculate Rewards
         </Button>
       </Col>
+
       {copyText && (
         <>
-          <Form.Group className="mt-4">
+          <Form.Group controlId="copyTextArea">
             <Form.Label>Copy/Paste Result</Form.Label>
             <Form.Control
               as="textarea"
@@ -567,13 +416,13 @@ function RewardForm() {
               onClick={(e) => e.currentTarget.select()}
             />
           </Form.Group>
-          <Col>
-            <Button variant="primary" onClick={handleClear}>
-              Clear Form
-            </Button>
-          </Col>
         </>
       )}
+      <Col>
+        <Button variant="primary" onClick={handleClear}>
+          Clear Form
+        </Button>
+      </Col>
     </Form>
   );
 }
