@@ -8,7 +8,7 @@ import { CharacterForm } from "./CharacterForm";
 // Function to get badge values based on conditions
 const getBadgeValue = (
   badge: (typeof badges)[number],
-  modifiers: { wanderberry?: boolean; overachiever?: boolean },
+  modifiers: { wanderberry?: boolean; overachiever?: boolean }
 ) => {
   if (badge === "Tamer") return 2;
   if (modifiers.wanderberry) {
@@ -212,6 +212,9 @@ function RewardForm() {
      */
     if (e.currentTarget.checked) {
       setValue("characters", []);
+      if (formState.isSubmitted) {
+        handleSubmit(onSubmit)();
+      }
     }
   };
 

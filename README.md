@@ -29,15 +29,11 @@ Total Coin Payout
 
 High Priority:
 
-- Add collab support (will be easy, just multiplying the final result by .75) ... but, bandana/badges can't be used on collabs. If the 'collab' option is toggled, disable the add character button (And remove all current character info). **CURRENTLY WORKING ON** currently it does the math correctly but the toggle doesn't remove any previously added characters
 - Add safari badge --> normally 1c, but 2c if a fauna or megafauna is present
+- Add wanderroot toggle (either a separate input or a checkbox)
 - Add better support for error users
   - Users that click wanderberry badge, but didn't include a wanderroot in the piece, thus making the badge null and also nurturing, agriculture, etc would be worth only 1c instead of 2c ... I probably won't have it check to see if there's a wanderroot specifically, but it should check that there is at least a number greater than 0 in the "fauna" section.
   - Users that try to add more than one wanderberry per prompt (there can only be one) ... but it's a character specific badge so it should remain in characters
-
-Myehhhh:
-
-- Fix the checkboxes so they aren't literally abysmal
 
 Low Priority:
 
@@ -46,6 +42,8 @@ Low Priority:
 
 # Completed
 
+- Add collab support (will be easy, just multiplying the final result by .75) ... but, bandana/badges can't be used on collabs. If the 'collab' option is toggled, disable the add character button (And remove all current character info).
+- Fix the checkboxes so they aren't literally abysmal
 - Add a reset form button
 - When a character is removed, their results need to disappear from the copy/paste results as well... not just the page.
 - Add in WC bonus calculation (submission WC - max WC requirement) / 250 \* 2c. (Basically: for each 250 words over the WC requirement the submission is, you get 2c)

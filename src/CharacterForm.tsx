@@ -86,7 +86,7 @@ const CharacterForm = forwardRef<HTMLDivElement, CharacterFormProps>(
           <Form.Label>Rad Bandana (1c)</Form.Label>
         </Form.Group>
         <Button
-          variant="primary"
+          variant="link"
           onClick={onRemove}
           className="position-absolute top-0 end-0 m-2"
         >
@@ -94,7 +94,7 @@ const CharacterForm = forwardRef<HTMLDivElement, CharacterFormProps>(
         </Button>
       </div>
     );
-  },
+  }
 );
 
 export { CharacterForm };
