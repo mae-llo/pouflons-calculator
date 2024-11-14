@@ -1,21 +1,20 @@
-import { ChangeEvent } from "react";
-import { useState } from "react";
-import { Form, Button, Col, Row, InputGroup } from "react-bootstrap";
-import { useFieldArray, useForm } from "react-hook-form";
-import { badges, FormFields } from "./form.types";
-import { CharacterForm } from "./CharacterForm";
+import { ChangeEvent, useState } from 'react';
+import { Button, Col, Form, Row } from 'react-bootstrap';
+import { useFieldArray, useForm } from 'react-hook-form';
+import { CharacterForm } from './CharacterForm';
+import { badges, FormFields } from './form.types';
 
 // Function to get badge values based on conditions
 const getBadgeValue = (
   badge: (typeof badges)[number],
-  modifiers: { wanderberry?: boolean; overachiever?: boolean }
+  modifiers: { wanderberry?: boolean; overachiever?: boolean },
 ) => {
-  if (badge === "Tamer") return 2;
+  if (badge === 'Tamer') return 2;
   if (modifiers.wanderberry) {
     if (
-      badge === "Nurturing" ||
-      badge === "Agriculture" ||
-      badge === "Safari"
+      badge === 'Nurturing' ||
+      badge === 'Agriculture' ||
+      badge === 'Safari'
     ) {
       return 2;
     }
@@ -57,7 +56,7 @@ const calculateRewards = (values: FormFields, isCollab: boolean) => {
 
   // Additional Length
   if (modifiedWC >= wcReq + 250) {
-    let extraWords = modifiedWC - wcReq;
+    const extraWords = modifiedWC - wcReq;
     const extraChunks = Math.floor(extraWords / 250);
     console.log(extraChunks);
 
@@ -150,7 +149,7 @@ const calculateRewards = (values: FormFields, isCollab: boolean) => {
 };
 
 function RewardForm() {
-  const [copyText, setCopyText] = useState("");
+  const [copyText, setCopyText] = useState('');
   const [isCollab, setIsCollab] = useState(false);
   const [isEpic, setIsEpic] = useState(false);
 
@@ -178,12 +177,12 @@ function RewardForm() {
 
   const { append, remove, fields } = useFieldArray({
     control,
-    name: "characters",
+    name: 'characters',
   });
 
   const handleAddCharacter = () => {
     append({
-      name: "",
+      name: '',
       badges: [],
       overachiever: false,
       wanderberry: false,
@@ -202,7 +201,7 @@ function RewardForm() {
     // if you pass {} to this it will explicitly reset the form to an empty object.
     // best to call it with no params since that will reset to the `defaultValues` defined above, which we need
     reset();
-    setCopyText("");
+    setCopyText('');
   };
 
   const handleCollabToggle = (e: ChangeEvent<HTMLInputElement>) => {
@@ -211,7 +210,7 @@ function RewardForm() {
      * remove all characters when 'collab' is enabled
      */
     if (e.currentTarget.checked) {
-      setValue("characters", []);
+      setValue('characters', []);
       if (formState.isSubmitted) {
         handleSubmit(onSubmit)();
       }
@@ -238,21 +237,21 @@ function RewardForm() {
             <Form.Label>Base Reward</Form.Label>
             <Form.Control
               type="number"
-              {...register("baseReward", { valueAsNumber: true })}
+              {...register('baseReward', { valueAsNumber: true })}
             />
           </Form.Group>
           <Form.Group as={Col} controlId="wcReq">
             <Form.Label>WC Req (Max)</Form.Label>
             <Form.Control
               type="number"
-              {...register("wcReq", { valueAsNumber: true })}
+              {...register('wcReq', { valueAsNumber: true })}
             />
           </Form.Group>
           <Form.Group as={Col} controlId="wcSubm">
             <Form.Label>WC of Submission</Form.Label>
             <Form.Control
               type="number"
-              {...register("wc", { valueAsNumber: true })}
+              {...register('wc', { valueAsNumber: true })}
             />
           </Form.Group>
         </Col>
@@ -262,7 +261,7 @@ function RewardForm() {
             <Form.Check
               inline
               type="checkbox"
-              {...register("items.plainSatchel")}
+              {...register('items.plainSatchel')}
             />
             <Form.Label>Plain Satchel</Form.Label>
           </Form.Group>
@@ -270,7 +269,7 @@ function RewardForm() {
             <Form.Check
               inline
               type="checkbox"
-              {...register("items.badgeOMatic")}
+              {...register('items.badgeOMatic')}
             />
             <Form.Label>Badge-o-matic</Form.Label>
           </Form.Group>
@@ -279,7 +278,7 @@ function RewardForm() {
             <Form.Check
               inline
               type="checkbox"
-              {...register("bonuses.featuredCharacter")}
+              {...register('bonuses.featuredCharacter')}
             />
             <Form.Label>Featured Character</Form.Label>
           </Form.Group>
@@ -288,7 +287,7 @@ function RewardForm() {
             <Form.Check
               inline
               type="checkbox"
-              {...register("bonuses.settingBonus")}
+              {...register('bonuses.settingBonus')}
             />
             <Form.Label>Setting Bonus</Form.Label>
           </Form.Group>
@@ -321,7 +320,7 @@ function RewardForm() {
           <Form.Label>Extra Character</Form.Label>
           <Form.Control
             type="number"
-            {...register("repeatableBonuses.extraCharacter", {
+            {...register('repeatableBonuses.extraCharacter', {
               valueAsNumber: true,
             })}
           />
@@ -330,7 +329,7 @@ function RewardForm() {
           <Form.Label>Pippets</Form.Label>
           <Form.Control
             type="number"
-            {...register("repeatableBonuses.pippets", {
+            {...register('repeatableBonuses.pippets', {
               valueAsNumber: true,
             })}
           />
@@ -339,14 +338,14 @@ function RewardForm() {
           <Form.Label>Fauna</Form.Label>
           <Form.Control
             type="number"
-            {...register("repeatableBonuses.fauna", { valueAsNumber: true })}
+            {...register('repeatableBonuses.fauna', { valueAsNumber: true })}
           />
         </Form.Group>
         <Form.Group as={Col} controlId="repeatableBonuses.megafauna">
           <Form.Label>Megafauna</Form.Label>
           <Form.Control
             type="number"
-            {...register("repeatableBonuses.megafauna", {
+            {...register('repeatableBonuses.megafauna', {
               valueAsNumber: true,
             })}
           />
@@ -361,7 +360,7 @@ function RewardForm() {
               <Form.Label>Story Summaries</Form.Label>
               <Form.Control
                 type="number"
-                {...register("epicQuestBonuses.summary", {
+                {...register('epicQuestBonuses.summary', {
                   valueAsNumber: true,
                 })}
               />
@@ -371,7 +370,7 @@ function RewardForm() {
               <Form.Check
                 type="checkbox"
                 label="Yes"
-                {...register("epicQuestBonuses.moodboard")}
+                {...register('epicQuestBonuses.moodboard')}
               />
             </Form.Group>
           </Row>

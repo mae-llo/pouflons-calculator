@@ -1,7 +1,7 @@
-import { forwardRef } from "react";
-import { Button, Col, Form, Row } from "react-bootstrap";
-import { FieldPathByValue, UseFormReturn } from "react-hook-form";
-import { badges, CharacterFields, FormFields } from "./form.types";
+import { forwardRef } from 'react';
+import { Button, Col, Form, Row } from 'react-bootstrap';
+import { FieldPathByValue, UseFormReturn } from 'react-hook-form';
+import { badges, CharacterFields, FormFields } from './form.types';
 
 type CharacterFormProps = {
   form: UseFormReturn<FormFields>;
@@ -9,7 +9,7 @@ type CharacterFormProps = {
   onRemove: () => void;
 };
 const CharacterForm = forwardRef<HTMLDivElement, CharacterFormProps>(
-  (props, ref) => {
+  function CharacterForm(props, ref) {
     const { form, name, onRemove } = props;
     const { register } = form;
     return (
