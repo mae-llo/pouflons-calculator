@@ -90,4 +90,4 @@ type FormFields = {
 };
 
 export { badges };
-export type { FormFields, CharacterFields };
+export type { CharacterFields, FormFields };
