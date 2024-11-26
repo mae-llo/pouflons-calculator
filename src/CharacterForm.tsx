@@ -14,7 +14,7 @@ const CharacterForm = forwardRef<HTMLDivElement, CharacterFormProps>(
     const { register } = form;
     return (
       <div ref={ref} className="d-flex flex-column gap-3">
-        <h6>Character</h6>
+        <h6>Character Details</h6>
         <Form.Group controlId={`${name}.name`}>
           <Form.Label>Character Name</Form.Label>
           <Form.Control
@@ -88,13 +88,13 @@ const CharacterForm = forwardRef<HTMLDivElement, CharacterFormProps>(
         <Button
           variant="link"
           onClick={onRemove}
-          className="position-absolute top-0 end-0 m-2"
+          className="position-absolute bottom-0 end-0 m-2"
         >
           Remove Character
         </Button>
       </div>
     );
-  }
+  },
 );
 
 export { CharacterForm };

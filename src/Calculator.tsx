@@ -161,6 +161,7 @@ function RewardForm() {
       characters: [],
       items: { plainSatchel: false, badgeOMatic: false },
       bonuses: { featuredCharacter: false, settingBonus: false },
+      toggleableEffects: { collabWork: false, epicQuest: false },
       repeatableBonuses: {
         extraCharacter: 0,
         pippets: 0,
@@ -201,6 +202,8 @@ function RewardForm() {
     // if you pass {} to this it will explicitly reset the form to an empty object.
     // best to call it with no params since that will reset to the `defaultValues` defined above, which we need
     reset();
+    setIsCollab(false);
+    setIsEpic(false);
     setCopyText('');
   };
 
@@ -256,43 +259,49 @@ function RewardForm() {
           </Form.Group>
         </Col>
         <Col>
-          <h6>Applicable Items</h6>
-          <Form.Group controlId="items.plainSatchel">
-            <Form.Check
-              inline
-              type="checkbox"
-              {...register('items.plainSatchel')}
-            />
-            <Form.Label>Plain Satchel</Form.Label>
-          </Form.Group>
-          <Form.Group controlId="items.badgeOMatic">
-            <Form.Check
-              inline
-              type="checkbox"
-              {...register('items.badgeOMatic')}
-            />
-            <Form.Label>Badge-o-matic</Form.Label>
-          </Form.Group>
-          <h6>Other Bonuses</h6>
-          <Form.Group controlId="bonuses.featuredCharacter">
-            <Form.Check
-              inline
-              type="checkbox"
-              {...register('bonuses.featuredCharacter')}
-            />
-            <Form.Label>Featured Character</Form.Label>
-          </Form.Group>
+          <Row>
+            <Col>
+              <h6>Applicable Items</h6>
+              <Form.Group controlId="items.plainSatchel">
+                <Form.Check
+                  inline
+                  type="checkbox"
+                  {...register('items.plainSatchel')}
+                />
+                <Form.Label>Plain Satchel</Form.Label>
+              </Form.Group>
+              <Form.Group controlId="items.badgeOMatic">
+                <Form.Check
+                  inline
+                  type="checkbox"
+                  {...register('items.badgeOMatic')}
+                />
+                <Form.Label>Badge-o-matic</Form.Label>
+              </Form.Group>
+            </Col>
+            <Col>
+              <h6>Other Bonuses</h6>
+              <Form.Group controlId="bonuses.featuredCharacter">
+                <Form.Check
+                  inline
+                  type="checkbox"
+                  {...register('bonuses.featuredCharacter')}
+                />
+                <Form.Label>Featured Character</Form.Label>
+              </Form.Group>
+              <Form.Group controlId="bonuses.settingBonus">
+                <Form.Check
+                  inline
+                  type="checkbox"
+                  {...register('bonuses.settingBonus')}
+                />
+                <Form.Label>Setting Bonus</Form.Label>
+              </Form.Group>
+            </Col>
+          </Row>
 
-          <Form.Group controlId="bonuses.settingBonus">
-            <Form.Check
-              inline
-              type="checkbox"
-              {...register('bonuses.settingBonus')}
-            />
-            <Form.Label>Setting Bonus</Form.Label>
-          </Form.Group>
           <h6>Toggleable Effects</h6>
-          <Form.Group controlId="isCollab">
+          <Form.Group controlId="toggleableEffects.collabWork">
             <Form.Check
               inline
               type="switch"
@@ -301,7 +310,7 @@ function RewardForm() {
             />
             <Form.Label>Collaborative Work</Form.Label>
           </Form.Group>
-          <Form.Group controlId="isEpic">
+          <Form.Group controlId="toggleableEffects.epicQuest">
             <Form.Check
               inline
               type="switch"
