@@ -1,5 +1,5 @@
 import { ChangeEvent, useState } from 'react';
-import { Button, Col, Form, Row } from 'react-bootstrap';
+import { Button, Col, Form, Row, Stack } from 'react-bootstrap';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { CharacterForm } from './CharacterForm';
 import { badges, FormFields } from './form.types';
@@ -377,6 +377,16 @@ function RewardForm() {
         </>
       )}
 
+      {!isCollab && (
+        <Stack direction="horizontal" className="gap-3 align-items-center">
+          <h5>Characters</h5>
+          <Button variant="secondary" onClick={handleAddCharacter}>
+            Add Character
+          </Button>
+        </Stack>
+      )}
+
+      {fields.length === 0 && <p>No characters added</p>}
       {fields.map((field, index) => (
         <div
           className="p-3 border rounded bg-light position-relative"
@@ -392,39 +402,27 @@ function RewardForm() {
         </div>
       ))}
 
-      {!isCollab && (
-        <Col>
-          <Button variant="primary" onClick={handleAddCharacter}>
-            Add Character
-          </Button>
-        </Col>
-      )}
-
-      <Col>
+      <Stack direction="horizontal" className="justify-content-end">
+        <Button variant="link" onClick={handleClear}>
+          Clear Form
+        </Button>
         <Button variant="primary" type="submit">
           Calculate Rewards
         </Button>
-      </Col>
+      </Stack>
 
       {copyText && (
-        <>
-          <Form.Group controlId="copyTextArea">
-            <Form.Label>Copy/Paste Result</Form.Label>
-            <Form.Control
-              as="textarea"
-              value={copyText}
-              readOnly
-              rows={4}
-              onClick={(e) => e.currentTarget.select()}
-            />
-          </Form.Group>
-        </>
+        <Form.Group controlId="copyTextArea">
+          <Form.Label>Copy/Paste Result</Form.Label>
+          <Form.Control
+            as="textarea"
+            value={copyText}
+            readOnly
+            rows={4}
+            onClick={(e) => e.currentTarget.select()}
+          />
+        </Form.Group>
       )}
-      <Col>
-        <Button variant="primary" onClick={handleClear}>
-          Clear Form
-        </Button>
-      </Col>
     </Form>
   );
 }
