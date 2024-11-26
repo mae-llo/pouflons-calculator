@@ -1,7 +1,9 @@
 import { ChangeEvent, useState } from 'react';
-import { Button, Col, Form, Row, Stack } from 'react-bootstrap';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { CharacterForm } from './CharacterForm';
+import { Button } from './components/button';
+import { Checkbox } from './components/checkbox';
+import { Input } from './components/input';
 import { badges, FormFields } from './form.types';
 
 // Function to get badge values based on conditions
@@ -230,179 +232,125 @@ function RewardForm() {
   };
 
   return (
-    <Form
+    <form
       onSubmit={handleSubmit(onSubmit)}
-      className="p-4 border rounded bg-light d-flex flex-column gap-3"
+      className="p-4 flex flex-col gap-3 doodle-border"
     >
-      <Row>
-        <Col>
-          <Form.Group as={Col} controlId="baseReward">
-            <Form.Label>Base Reward</Form.Label>
-            <Form.Control
-              type="number"
-              {...register('baseReward', { valueAsNumber: true })}
-            />
-          </Form.Group>
-          <Form.Group as={Col} controlId="wcReq">
-            <Form.Label>WC Req (Max)</Form.Label>
-            <Form.Control
-              type="number"
-              {...register('wcReq', { valueAsNumber: true })}
-            />
-          </Form.Group>
-          <Form.Group as={Col} controlId="wcSubm">
-            <Form.Label>WC of Submission</Form.Label>
-            <Form.Control
-              type="number"
-              {...register('wc', { valueAsNumber: true })}
-            />
-          </Form.Group>
-        </Col>
-        <Col>
-          <Row>
-            <Col>
-              <h6>Applicable Items</h6>
-              <Form.Group controlId="items.plainSatchel">
-                <Form.Check
-                  inline
-                  type="checkbox"
+      <div className="grid grid-cols-2 gap-4">
+        <div className="flex flex-col gap-3">
+          <Input
+            type="number"
+            label="Base Reward"
+            {...register('baseReward', { valueAsNumber: true })}
+          />
+          <Input
+            label="WC Req (Max)"
+            type="number"
+            {...register('wcReq', { valueAsNumber: true })}
+          />
+          <Input
+            label="WC of Submission"
+            type="number"
+            {...register('wc', { valueAsNumber: true })}
+          />
+        </div>
+        <div className="flex flex-col gap-3">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <h4>Applicable Items</h4>
+              <div className="flex flex-col">
+                <Checkbox
+                  label="Plain Satchel"
                   {...register('items.plainSatchel')}
                 />
-                <Form.Label>Plain Satchel</Form.Label>
-              </Form.Group>
-              <Form.Group controlId="items.badgeOMatic">
-                <Form.Check
-                  inline
-                  type="checkbox"
+                <Checkbox
+                  label="Badge-o-matic"
                   {...register('items.badgeOMatic')}
                 />
-                <Form.Label>Badge-o-matic</Form.Label>
-              </Form.Group>
-            </Col>
-            <Col>
-              <h6>Other Bonuses</h6>
-              <Form.Group controlId="bonuses.featuredCharacter">
-                <Form.Check
-                  inline
-                  type="checkbox"
+              </div>
+            </div>
+            <div>
+              <h4>Other Bonuses</h4>
+              <div className="flex flex-col">
+                <Checkbox
+                  label="Featured Character"
                   {...register('bonuses.featuredCharacter')}
                 />
-                <Form.Label>Featured Character</Form.Label>
-              </Form.Group>
-              <Form.Group controlId="bonuses.settingBonus">
-                <Form.Check
-                  inline
-                  type="checkbox"
+                <Checkbox
+                  label="Setting Bonus"
                   {...register('bonuses.settingBonus')}
                 />
-                <Form.Label>Setting Bonus</Form.Label>
-              </Form.Group>
-            </Col>
-          </Row>
-
-          <h6>Toggleable Effects</h6>
-          <Form.Group controlId="toggleableEffects.collabWork">
-            <Form.Check
-              inline
-              type="switch"
+              </div>
+            </div>
+          </div>
+          <h4>Toggleable Effects</h4>
+          <div className="flex flex-col">
+            <Checkbox
+              label="Collaborative Work"
               checked={isCollab}
               onChange={handleCollabToggle}
             />
-            <Form.Label>Collaborative Work</Form.Label>
-          </Form.Group>
-          <Form.Group controlId="toggleableEffects.epicQuest">
-            <Form.Check
-              inline
-              type="switch"
+            <Checkbox
+              label="Epic Quest"
               checked={isEpic}
               onChange={handleEpicToggle}
             />
-            <Form.Label>Epic Quest</Form.Label>
-          </Form.Group>
-        </Col>
-      </Row>
+          </div>
+        </div>
+      </div>
 
-      <h6>Repeatable Bonuses</h6>
+      <h4>Repeatable Bonuses</h4>
 
-      <Row>
-        <Form.Group as={Col} controlId="repeatableBonuses.extraCharacter">
-          <Form.Label>Extra Character</Form.Label>
-          <Form.Control
-            type="number"
-            {...register('repeatableBonuses.extraCharacter', {
-              valueAsNumber: true,
-            })}
-          />
-        </Form.Group>
-        <Form.Group as={Col} controlId="repeatableBonuses.pippets">
-          <Form.Label>Pippets</Form.Label>
-          <Form.Control
-            type="number"
-            {...register('repeatableBonuses.pippets', {
-              valueAsNumber: true,
-            })}
-          />
-        </Form.Group>
-        <Form.Group as={Col} controlId="repeatableBonuses.fauna">
-          <Form.Label>Fauna</Form.Label>
-          <Form.Control
-            type="number"
-            {...register('repeatableBonuses.fauna', { valueAsNumber: true })}
-          />
-        </Form.Group>
-        <Form.Group as={Col} controlId="repeatableBonuses.megafauna">
-          <Form.Label>Megafauna</Form.Label>
-          <Form.Control
-            type="number"
-            {...register('repeatableBonuses.megafauna', {
-              valueAsNumber: true,
-            })}
-          />
-        </Form.Group>
-      </Row>
+      <div className="flex gap-4">
+        <Input
+          label="Extra Character"
+          {...register('repeatableBonuses.extraCharacter', {
+            valueAsNumber: true,
+          })}
+        />
+        <Input
+          label="Pippets"
+          {...register('repeatableBonuses.pippets', { valueAsNumber: true })}
+        />
+        <Input
+          label="Fauna"
+          {...register('repeatableBonuses.fauna', { valueAsNumber: true })}
+        />
+        <Input
+          label="Megafauna"
+          {...register('repeatableBonuses.megafauna', { valueAsNumber: true })}
+        />
+      </div>
 
       {isEpic && (
         <>
-          <h6>Epic Quest Bonuses</h6>
-          <Row>
-            <Form.Group as={Col} controlId="epicQuestBonuses.summary">
-              <Form.Label>Story Summaries</Form.Label>
-              <Form.Control
-                type="number"
-                {...register('epicQuestBonuses.summary', {
-                  valueAsNumber: true,
-                })}
-              />
-            </Form.Group>
-            <Form.Group as={Col} controlId="epicQuestBonuses.moodboard">
-              <Form.Label>Moodboard OR Playlist</Form.Label>
-              <Form.Check
-                type="checkbox"
-                label="Yes"
-                {...register('epicQuestBonuses.moodboard')}
-              />
-            </Form.Group>
-          </Row>
+          <h4>Epic Quest Bonuses</h4>
+          <div className="flex gap-4 items-center">
+            <Input
+              label="Story Summaries"
+              {...register('epicQuestBonuses.summary', { valueAsNumber: true })}
+            />
+            <Checkbox
+              label="Moodboard OR Playlist"
+              {...register('epicQuestBonuses.moodboard')}
+            />
+          </div>
         </>
       )}
 
-      {!isCollab && fields.length === 0 && (
-        <>
-          <Stack direction="horizontal" className="gap-3 align-items-center">
-            <h5>Characters</h5>
-            <Button variant="secondary" onClick={handleAddCharacter}>
-              Add Character
-            </Button>
-          </Stack>
-          <p>No characters added</p>
-        </>
+      {!isCollab && (<>
+        <div className="flex gap-3 items-center">
+          <h4>Characters</h4>
+          <Button variant="primary" onClick={handleAddCharacter}>
+            Add Character
+          </Button>
+        </div>
+            {fields.length === 0 && <p>No characters added</p>}
+          </>
       )}
 
       {fields.map((field, index) => (
-        <div
-          className="p-3 border rounded bg-light position-relative"
-          key={field.id}
-        >
+        <div className="p-3 border relative" key={field.id}>
           <CharacterForm
             form={form}
             name={`characters.${index}`}
@@ -413,28 +361,27 @@ function RewardForm() {
         </div>
       ))}
 
-      <Stack direction="horizontal" className="justify-content-end">
-        <Button variant="link" onClick={handleClear}>
+      <div className="flex justify-end gap-4">
+        <Button variant="link" color="red" onClick={handleClear}>
           Clear Form
         </Button>
         <Button variant="primary" type="submit">
           Calculate Rewards
         </Button>
-      </Stack>
+      </div>
 
       {copyText && (
-        <Form.Group controlId="copyTextArea">
-          <Form.Label>Copy/Paste Result</Form.Label>
-          <Form.Control
-            as="textarea"
+        <label className="!flex flex-col font-bold !p-0">
+          Copy/Paste Result
+          <textarea
             value={copyText}
             readOnly
             rows={4}
             onClick={(e) => e.currentTarget.select()}
           />
-        </Form.Group>
+        </label>
       )}
-    </Form>
+    </form>
   );
 }
 
