@@ -386,16 +386,18 @@ function RewardForm() {
         </>
       )}
 
-      {!isCollab && (
-        <Stack direction="horizontal" className="gap-3 align-items-center">
-          <h5>Characters</h5>
-          <Button variant="secondary" onClick={handleAddCharacter}>
-            Add Character
-          </Button>
-        </Stack>
+      {!isCollab && fields.length === 0 && (
+        <>
+          <Stack direction="horizontal" className="gap-3 align-items-center">
+            <h5>Characters</h5>
+            <Button variant="secondary" onClick={handleAddCharacter}>
+              Add Character
+            </Button>
+          </Stack>
+          <p>No characters added</p>
+        </>
       )}
 
-      {fields.length === 0 && <p>No characters added</p>}
       {fields.map((field, index) => (
         <div
           className="p-3 border rounded bg-light position-relative"
