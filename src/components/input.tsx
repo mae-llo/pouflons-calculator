@@ -1,4 +1,4 @@
-import { ChangeEventHandler } from 'react';
+import { ChangeEventHandler, forwardRef } from 'react';
 
 type InputProps = {
   type?: 'text' | 'number';
@@ -7,14 +7,14 @@ type InputProps = {
   placeholder?: string;
 };
 
-const Input = (props: InputProps) => {
+const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
   const { label, ...rest } = props;
   return (
     <label className="!flex flex-col font-bold !p-0">
       {label}
-      <input {...rest} />
+      <input {...rest} ref={ref}/>
     </label>
   );
-};
+});
 
 export { Input };

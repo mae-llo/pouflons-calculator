@@ -1,5 +1,5 @@
 import { ChangeEvent, useState } from 'react';
-import { useFieldArray, useForm } from 'react-hook-form';
+import { useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { CharacterForm } from './CharacterForm';
 import { Button } from './components/button';
 import { Checkbox } from './components/checkbox';
@@ -152,8 +152,6 @@ const calculateRewards = (values: FormFields, isCollab: boolean) => {
 
 function RewardForm() {
   const [copyText, setCopyText] = useState('');
-  const [isCollab, setIsCollab] = useState(false);
-  const [isEpic, setIsEpic] = useState(false);
 
   const form = useForm<FormFields>({
     defaultValues: {
@@ -176,7 +174,12 @@ function RewardForm() {
       },
     },
   });
-  const { register, handleSubmit, control, formState, reset, setValue } = form;
+  const { register, handleSubmit, control, formState, reset, setValue, watch } = form;
+  const [isCollab, isEpic] = useWatch({control, name:
+        ["toggleableEffects.collabWork", "toggleableEffects.epicQuest"
+]
+})
+
 
   const { append, remove, fields } = useFieldArray({
     control,
@@ -204,13 +207,10 @@ function RewardForm() {
     // if you pass {} to this it will explicitly reset the form to an empty object.
     // best to call it with no params since that will reset to the `defaultValues` defined above, which we need
     reset();
-    setIsCollab(false);
-    setIsEpic(false);
     setCopyText('');
   };
 
   const handleCollabToggle = (e: ChangeEvent<HTMLInputElement>) => {
-    setIsCollab((prevState) => !prevState);
     /**
      * remove all characters when 'collab' is enabled
      */
@@ -220,10 +220,6 @@ function RewardForm() {
         handleSubmit(onSubmit)();
       }
     }
-  };
-
-  const handleEpicToggle = () => {
-    setIsEpic((prevState) => !prevState);
   };
 
   const onSubmit = (values: FormFields) => {
@@ -287,13 +283,11 @@ function RewardForm() {
           <div className="flex flex-col">
             <Checkbox
               label="Collaborative Work"
-              checked={isCollab}
-              onChange={handleCollabToggle}
+              {...register("toggleableEffects.collabWork",{onChange:handleCollabToggle})}
             />
             <Checkbox
+                {...register("toggleableEffects.epicQuest")}
               label="Epic Quest"
-              checked={isEpic}
-              onChange={handleEpicToggle}
             />
           </div>
         </div>
@@ -345,7 +339,7 @@ function RewardForm() {
             Add Character
           </Button>
         </div>
-            {fields.length === 0 && <p>No characters added</p>}
+            {fields.length === 0 && <p className="font-bold text-gray-400">No characters added</p>}
           </>
       )}
 
