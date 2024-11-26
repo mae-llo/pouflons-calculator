@@ -86,7 +86,7 @@ const calculateRewards = (values: FormFields, isCollab: boolean) => {
     totalCoins += repeatableBonuses.pippets;
   }
   if (repeatableBonuses.fauna > 0) {
-    breakdown += `Fauna x${repeatableBonuses.fauna}: ${repeatableBonuses.fauna} coins\n`;
+    breakdown += `Fauna x${repeatableBonuses.fauna}: ${repeatableBonuses.fauna}c\n`;
     totalCoins += repeatableBonuses.fauna;
   }
   if (repeatableBonuses.megafauna > 0) {
