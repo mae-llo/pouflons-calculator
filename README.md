@@ -1,6 +1,6 @@
 # pouflons-calculator
 
-Hackathon effort by applebabbles to quickly write a code that can easily calculate ARPG submissions for Pouflons.
+Hackathon effort by applebabbles to quickly write a code that can easily calculate ARPG submissions for Pouflons. Currently live on [Vercel](https://pouflons-calculator.vercel.app/)
 Based largely on the following:
 
 - [Coin Guide](https://www.play.pouflons.com/info/coins)
