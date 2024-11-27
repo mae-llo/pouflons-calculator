@@ -1,6 +1,9 @@
 import { forwardRef } from 'react';
-import { Button, Col, Form, Row } from 'react-bootstrap';
 import { FieldPathByValue, UseFormReturn } from 'react-hook-form';
+import { Button } from './components/button';
+import { Checkbox } from './components/checkbox';
+import { Input } from './components/input';
+import { Select } from './components/select';
 import { badges, CharacterFields, FormFields } from './form.types';
 
 type CharacterFormProps = {
@@ -13,85 +16,60 @@ const CharacterForm = forwardRef<HTMLDivElement, CharacterFormProps>(
     const { form, name, onRemove } = props;
     const { register } = form;
     return (
-      <div ref={ref} className="d-flex flex-column gap-3">
-        <h6>Character Details</h6>
-        <Form.Group controlId={`${name}.name`}>
-          <Form.Label>Character Name</Form.Label>
-          <Form.Control
-            type="text"
-            {...register(`${name}.name`)}
-            placeholder="Enter character name"
-          />
-        </Form.Group>
+      <div ref={ref} className="flex flex-col gap-3">
+        <h4>Character Details</h4>
+        <div className="absolute top-2 right-2">
+          <Button variant="link" color="red" onClick={onRemove}>
+            Remove Character
+          </Button>
+        </div>
+        <Input
+          label="Character Name"
+          {...register(`${name}.name`)}
+          placeholder="Enter character name"
+        />
 
-        <Row>
-          <Form.Group as={Col} controlId={`${name}.badges.0`}>
-            <Form.Label>Badge 1</Form.Label>
-            <Form.Select {...register(`${name}.badges.0`)}>
-              <option value="">Select a badge</option>
-              {badges.map((badge) => (
-                <option key={badge} value={badge}>
-                  {badge}
-                </option>
-              ))}
-            </Form.Select>
-          </Form.Group>
-          <Form.Group as={Col} controlId={`${name}.badges.1`}>
-            <Form.Label>Badge 2</Form.Label>
-            <Form.Select {...register(`${name}.badges.1`)}>
-              <option value="">Select a badge</option>
-              {badges.map((badge) => (
-                <option key={badge} value={badge}>
-                  {badge}
-                </option>
-              ))}
-            </Form.Select>
-          </Form.Group>
-          <Form.Group as={Col} controlId={`${name}.badges.2`}>
-            <Form.Label>Badge 3</Form.Label>
-            <Form.Select {...register(`${name}.badges.2`)}>
-              <option value="">Select a badge</option>
-              {badges.map((badge) => (
-                <option key={badge} value={badge}>
-                  {badge}
-                </option>
-              ))}
-            </Form.Select>
-          </Form.Group>
-        </Row>
-
-        <h6>Character Bonuses</h6>
-        <Form.Group controlId={`${name}.overachiever`}>
-          <Form.Check
-            type="checkbox"
-            inline
+        <div className="grid grid-cols-3 gap-4">
+          <Select label="Badge 1" {...register(`${name}.badges.0`)}>
+            <option value="">Select a badge</option>
+            {badges.map((badge) => (
+              <option key={badge} value={badge}>
+                {badge}
+              </option>
+            ))}
+          </Select>
+          <Select label="Badge 2" {...register(`${name}.badges.1`)}>
+            <option value="">Select a badge</option>
+            {badges.map((badge) => (
+              <option key={badge} value={badge}>
+                {badge}
+              </option>
+            ))}
+          </Select>
+          <Select label="Badge 3" {...register(`${name}.badges.2`)}>
+            <option value="">Select a badge</option>
+            {badges.map((badge) => (
+              <option key={badge} value={badge}>
+                {badge}
+              </option>
+            ))}
+          </Select>
+        </div>
+        <h4>Character Bonuses</h4>
+        <div className="flex flex-col">
+          <Checkbox
+            label="Overachiever Badge (5c)"
             {...register(`${name}.overachiever`)}
           />
-          <Form.Label>Overachiever Badge (5c)</Form.Label>
-        </Form.Group>
-        <Form.Group controlId={`${name}.wanderberry`}>
-          <Form.Check
-            type="checkbox"
-            inline
+          <Checkbox
+            label="Wanderberry Badge (2c)"
             {...register(`${name}.wanderberry`)}
           />
-          <Form.Label>Wanderberry Badge (2c)</Form.Label>
-        </Form.Group>
-        <Form.Group controlId={`${name}.redBandana`}>
-          <Form.Check
-            type="checkbox"
-            inline
+          <Checkbox
+            label="Rad Bandana (1c)"
             {...register(`${name}.radBandana`)}
           />
-          <Form.Label>Rad Bandana (1c)</Form.Label>
-        </Form.Group>
-        <Button
-          variant="link"
-          onClick={onRemove}
-          className="position-absolute bottom-0 end-0 m-2"
-        >
-          Remove Character
-        </Button>
+        </div>
       </div>
     );
   },
