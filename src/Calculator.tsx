@@ -60,7 +60,6 @@ const calculateRewards = (values: FormFields, isCollab: boolean) => {
   if (modifiedWC >= wcReq + 250) {
     const extraWords = modifiedWC - wcReq;
     const extraChunks = Math.floor(extraWords / 250);
-    console.log(extraChunks);
 
     breakdown += `Additional Length x${extraChunks}: ${extraChunks * 2}c\n`;
     totalCoins += extraChunks * 2;
@@ -174,12 +173,12 @@ function RewardForm() {
       },
     },
   });
-  const { register, handleSubmit, control, formState, reset, setValue, watch } = form;
-  const [isCollab, isEpic] = useWatch({control, name:
-        ["toggleableEffects.collabWork", "toggleableEffects.epicQuest"
-]
-})
-
+  const { register, handleSubmit, control, formState, reset, setValue, watch } =
+    form;
+  const [isCollab, isEpic] = useWatch({
+    control,
+    name: ['toggleableEffects.collabWork', 'toggleableEffects.epicQuest'],
+  });
 
   const { append, remove, fields } = useFieldArray({
     control,
@@ -283,10 +282,12 @@ function RewardForm() {
           <div className="flex flex-col">
             <Checkbox
               label="Collaborative Work"
-              {...register("toggleableEffects.collabWork",{onChange:handleCollabToggle})}
+              {...register('toggleableEffects.collabWork', {
+                onChange: handleCollabToggle,
+              })}
             />
             <Checkbox
-                {...register("toggleableEffects.epicQuest")}
+              {...register('toggleableEffects.epicQuest')}
               label="Epic Quest"
             />
           </div>
@@ -332,15 +333,18 @@ function RewardForm() {
         </>
       )}
 
-      {!isCollab && (<>
-        <div className="flex gap-3 items-center">
-          <h4>Characters</h4>
-          <Button variant="primary" onClick={handleAddCharacter}>
-            Add Character
-          </Button>
-        </div>
-            {fields.length === 0 && <p className="font-bold text-gray-400">No characters added</p>}
-          </>
+      {!isCollab && (
+        <>
+          <div className="flex gap-3 items-center">
+            <h4>Characters</h4>
+            <Button variant="primary" onClick={handleAddCharacter}>
+              Add Character
+            </Button>
+          </div>
+          {fields.length === 0 && (
+            <p className="font-bold text-gray-400">No characters added</p>
+          )}
+        </>
       )}
 
       {fields.map((field, index) => (
